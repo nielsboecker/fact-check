@@ -1,7 +1,8 @@
 import jsonlines
 from collections import Counter
 import pandas as pd
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 DATA_EXAMPLE_JSONL = './data/example.jsonl'
 
@@ -19,24 +20,33 @@ def read_jsonl_and_map_to_df(jsonl_path: str, columns: list):
     return itemsDF
 
 
-def get_words_breakdown(df: pd.DataFrame, lower: bool = True):
+def get_words_breakdown(df: pd.DataFrame):
     words = []
     for row in df:
         words.extend(row.split(" "))
-    if lower:
-        words = list(map(lambda x: str(x).lower(), words))
     return words
 
 
-def get_word_count(words: list, sorted: bool = True):
+def get_word_counts(words: list, lower: bool = True, sort: bool = True) -> list:
+    if lower:
+        words = list(map(lambda x: str(x).lower(), words))
     counter = Counter(words)
-    if sorted:
+    if sort:
         return counter.most_common()
     return list(counter.items())
 
 
 if __name__ == '__main__':
     df = read_jsonl_and_map_to_df(DATA_EXAMPLE_JSONL, DATA_COLUMNS)
-    words = get_words_breakdown(df['claim'])
-    counts = get_word_count(words)
-    print(counts)
+    word_list = get_words_breakdown(df['claim'])
+    word_counts = get_word_counts(word_list)
+    print(word_counts)
+
+    distinct_words = [count[0] for count in word_counts]
+    distinct_counts = [count[1] for count in word_counts]
+
+    indexes = np.arange(len(distinct_words))
+    width = 1
+    plt.bar(indexes, distinct_counts, width)
+    plt.xticks(indexes + width * 0.5, distinct_words)
+    plt.show()
