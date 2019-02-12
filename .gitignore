@@ -1,0 +1,6 @@
+# input files
+wiki-pages.zip
+
+# IntelliJ
+*.iml
+.idea/
