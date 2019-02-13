@@ -1,3 +1,5 @@
 jsonlines
 pandas
 matplotlib
+jupyter
+

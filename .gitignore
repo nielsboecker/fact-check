@@ -1,6 +1,13 @@
 # input files
 wiki-pages.zip
+wiki-pages/
 
 # IntelliJ
 *.iml
 .idea/
+
+# Python
+venv/*
+
+# Jupyter
+.ipynb_checkpoints/
