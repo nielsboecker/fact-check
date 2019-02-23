@@ -1,5 +1,7 @@
 import jsonlines
 import pandas as pd
+from termcolor import colored
+
 
 def read_jsonl_and_map_to_df(jsonl_path: str, columns: list) -> pd.DataFrame:
     items = []
@@ -7,5 +9,5 @@ def read_jsonl_and_map_to_df(jsonl_path: str, columns: list) -> pd.DataFrame:
         for fact in reader:
             items.append(fact)
     itemsDF = pd.DataFrame(items, columns=columns)
-    print('Read {} lines from "{}".'.format(len(items), jsonl_path))
+    print(colored('Read {} lines from "{}"'.format(len(items), jsonl_path), attrs=['bold']))
     return itemsDF

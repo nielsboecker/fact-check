@@ -2,4 +2,4 @@ jsonlines
 pandas
 matplotlib
 jupyter
-
+termcolor
