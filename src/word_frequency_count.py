@@ -5,8 +5,8 @@ from termcolor import colored
 
 import pandas as pd
 
-from src.constants import DATA_WIKI_PATH
-from src.jsonl_io import read_jsonl_and_map_to_df
+from src.constants import DATA_WIKI_PATH, DATA_BASE_PATH
+from src.jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 
 
 def filter_articles(articles: pd.DataFrame) -> pd.DataFrame:
@@ -73,9 +73,15 @@ def process_count_all() -> list:
     return accumulated_word_count.most_common()
 
 
+def export_result(result: list):
+    output_path = DATA_BASE_PATH + 'accumulated_word_count.jsonl'
+    write_list_to_jsonl(output_path, result)
+
+
 if __name__ == '__main__':
     start_time = time.time()
     word_count = process_count_all()
-    print(colored('Counted frequencies of {} unique words'.format(len(word_count)), attrs=['bold']))
-    print(colored('Top 10 extract: {}'.format(word_count[0:10]), 'blue'))
+    print(colored('Counted frequencies of {:,} unique words'.format(len(word_count)), attrs=['bold']))
+    print('Top 10 extract: {}'.format(word_count[0:10]))
     print('Finished processing after {:.2f} seconds'.format(time.time() - start_time))
+    export_result(word_count)
