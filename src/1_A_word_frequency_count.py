@@ -1,11 +1,11 @@
 import re
 import time
 from collections import Counter
-from termcolor import colored
 
 import pandas as pd
+from termcolor import colored
 
-from src.constants import DATA_WIKI_PATH, DATA_BASE_PATH
+from src.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH
 from src.jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 
 
@@ -74,8 +74,7 @@ def process_count_all() -> list:
 
 
 def export_result(result: list):
-    output_path = DATA_BASE_PATH + 'accumulated_word_count.jsonl'
-    write_list_to_jsonl(output_path, result)
+    write_list_to_jsonl(GENERATED_COUNTS_PATH, result)
 
 
 if __name__ == '__main__':

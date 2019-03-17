@@ -3,7 +3,7 @@ import pandas as pd
 from termcolor import colored
 
 
-def read_jsonl_and_map_to_df(input_path: str, columns: list) -> pd.DataFrame:
+def read_jsonl_and_map_to_df(input_path: str, columns: list = None) -> pd.DataFrame:
     items = []
     with jsonlines.open(input_path) as reader:
         for fact in reader:
