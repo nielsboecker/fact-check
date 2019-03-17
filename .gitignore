@@ -1,6 +1,7 @@
 # input files
-wiki-pages.zip
-wiki-pages/
+data/*.jsonl
+data/wiki-pages.zip
+data/wiki-pages/
 
 # IntelliJ
 *.iml
