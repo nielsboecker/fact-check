@@ -5,8 +5,8 @@ from collections import Counter
 import pandas as pd
 from termcolor import colored
 
-from src.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH
-from src.jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH
+from jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 
 
 def filter_articles(articles: pd.DataFrame) -> pd.DataFrame:

@@ -1,19 +1,34 @@
 import argparse
+import logging
+import os
 import re
+import sys
 import time
 from collections import Counter
+import concurrent.futures
+import multiprocessing
+from multiprocessing import Pool, cpu_count
 
 import pandas as pd
 from termcolor import colored
 
-from src.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDFS_PATH
-from src.jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDFS_PATH
+from jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 
 
-# TODO: Remove?
-parser = argparse.ArgumentParser()
-parser.add_argument("--debug", help="only use subset of data", action="store_true")
-args = parser.parse_args()
+#### parser = argparse.ArgumentParser()
+#### #parser.add_argument("--debug", help="only use subset of data", action="store_true")
+#### parser.add_argument("-p", "--processes", type=int, default=4, help="number of processes to spawn")
+#### args = parser.parse_args()
+
+# logger = logging.getLogger()
+# logger.setLevel(logging.INFO)
+# fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
+# console = logging.StreamHandler()
+# console.setFormatter(fmt)
+# logger.addHandler(console)
+
+TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
 
 def filter_articles(articles: pd.DataFrame) -> pd.DataFrame:
@@ -52,6 +67,9 @@ def process_normalise_tokenise_filter(raw_article: str) -> list:
 
 
 def process_generate_idfs_batch(id: int) -> Counter:
+    colour = TERM_COLOURS[len(TERM_COLOURS) % id]
+    print(colored('Start processing batch #{}'.format(id), colour, attrs=['bold']))
+
     start_time = time.time()
 
     batch_file_path = '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, id)
@@ -68,23 +86,32 @@ def process_generate_idfs_batch(id: int) -> Counter:
         words_set = set(filtered_tokens)
 
         if (index % 1000 == 0):
-            print('Processing index {} of {}...'.format(index, len(article_texts)))
+            print(colored('Processing document [{} / {}] of batch #{}...'.format(index, len(article_texts), id), colour))
 
         # count for included words will be one
         words_in_doc = Counter(words_set)
         accumulated_batch_idfs += words_in_doc
 
-    print('Finished processing batch after {:.2f} seconds'.format(time.time() - start_time))
+    print(colored('Finished processing batch #{} after {:.2f} seconds'.format(id, time.time() - start_time), colour, attrs=['bold']))
     return accumulated_batch_idfs
 
 
 def generate_idfs_all() -> list:
     start_index_inclusive = 1
     stop_index_exclusive = 110
-    accumulated_all_idfs = Counter()
 
-    for id in range(start_index_inclusive, stop_index_exclusive):
-        accumulated_all_idfs += process_generate_idfs_batch(id)
+    num_processes = cpu_count() # max(cpu_count() - 2, 2)
+    print(colored('Detected {} CPUs, spawing {} processes'.format(cpu_count(), num_processes), attrs=['bold']))
+    pool = Pool(processes=num_processes)
+
+    # blocks until the result is ready
+    batch_idfs_results = pool.map(process_generate_idfs_batch, range(1, 3))
+    pool.close()
+
+    print('Merging {} partial results...'.format(len(batch_idfs_results)))
+    accumulated_all_idfs = Counter()
+    for batch_result in batch_idfs_results:
+        accumulated_all_idfs += batch_result
 
     return accumulated_all_idfs.most_common()
 
