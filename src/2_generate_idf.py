@@ -67,7 +67,7 @@ def process_normalise_tokenise_filter(raw_article: str) -> list:
 
 
 def process_generate_idfs_batch(id: int) -> Counter:
-    colour = TERM_COLOURS[len(TERM_COLOURS) % id]
+    colour = TERM_COLOURS[id % len(TERM_COLOURS)]
     print(colored('Start processing batch #{}'.format(id), colour, attrs=['bold']))
 
     start_time = time.time()
