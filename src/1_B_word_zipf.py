@@ -23,7 +23,7 @@ def verify_plot_zipfs_law():
     plt.plot(x_ranks_log, [intercept + slope * rank for rank in x_ranks_log], 'red')  # , label='fitted line')
 
     plt.xlabel('$log(rank)$')
-    plt.ylabel('$log(word frequency)$')
+    plt.ylabel('$log(frequency)$')
     plt.figtext(0.3, 0.45, '$R^2 = {:.5f}$'.format(r_squared))
     # plt.legend()
 
