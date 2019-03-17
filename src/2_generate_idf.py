@@ -85,7 +85,7 @@ def process_generate_idfs_batch(id: int) -> Counter:
         # use set to prevent multiple occurrences of word in doc
         words_set = set(filtered_tokens)
 
-        if (index % 1000 == 0):
+        if (index % 5000 == 0):
             print(colored('Processing document [{} / {}] of batch #{}...'.format(index, len(article_texts), id), colour))
 
         # count for included words will be one
@@ -105,7 +105,7 @@ def generate_idfs_all() -> list:
     pool = Pool(processes=num_processes)
 
     # blocks until the result is ready
-    batch_idfs_results = pool.map(process_generate_idfs_batch, range(1, 3))
+    batch_idfs_results = pool.map(process_generate_idfs_batch, range(start_index_inclusive, stop_index_exclusive))
     pool.close()
 
     print('Merging {} partial results...'.format(len(batch_idfs_results)))
