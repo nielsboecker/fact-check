@@ -50,8 +50,12 @@ def process_normalise_tokenise_filter(raw_article: str) -> list:
     return filter_tokens(all_tokens)
 
 
-def process_count_batch(id: int) -> Counter:
-    batch_file_path = '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, id)
+def get_wiki_batch_path(batch_id):
+    return '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, batch_id)
+
+
+def process_count_batch(batch_id: int) -> Counter:
+    batch_file_path = get_wiki_batch_path(batch_id)
     all_articles = read_jsonl_and_map_to_df(batch_file_path, ['text'])
     filtered_articles = filter_articles(all_articles)
     print('Using {} articles after filtering'.format(len(filtered_articles)))

@@ -5,3 +5,4 @@ jupyter
 termcolor
 scipy
 argparse
+pyhash

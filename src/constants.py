@@ -6,11 +6,11 @@ DATA_TRAINING_PATH = DATA_BASE_PATH + 'train.jsonl'
 DATA_DEV_UNLABELED_PATH = DATA_BASE_PATH + 'shared_task_dev_public.jsonl' # TODO: Wrong dataset
 DATA_DEV_LABELED_PATH = DATA_BASE_PATH + 'shared_task_dev.jsonl'
 
-# paths to generated output
+# paths to generated interim data and output
 GENERATED_BASE_PATH = './generated/'
 GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
 GENERATED_IDFS_PATH = GENERATED_BASE_PATH + 'words_and_idfs.jsonl'
-GENERATED_WIKI_BATCHES_FIRST_ROW_MAPPING_PATH = GENERATED_BASE_PATH + 'wiki_batch_first_row_mapping.jsonl'
+GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY = GENERATED_BASE_PATH + 'wiki-page-batch-mappings/'
 
 # DATA_COLUMNS_UNLABELED = ['id', 'claim']
 # DATA_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
