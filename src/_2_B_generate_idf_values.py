@@ -1,64 +1,25 @@
-import re
+import math
 import time
 from collections import Counter
 from multiprocessing import Pool, cpu_count
 
-import pandas as pd
-from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDFS_PATH
-from jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+import argparse
+from _1_A_word_frequency_count import filter_articles, parse_article_text, process_normalise_tokenise_filter
+from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH
+from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from termcolor import colored
 
-#### parser = argparse.ArgumentParser()
-#### #parser.add_argument("--debug", help="only use subset of data", action="store_true")
-#### parser.add_argument("-p", "--processes", type=int, default=4, help="number of processes to spawn")
-#### args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("--debug", help="only use subset of data", action="store_true")
+args = parser.parse_args()
 
-# logger = logging.getLogger()
-# logger.setLevel(logging.INFO)
-# fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-# console = logging.StreamHandler()
-# console.setFormatter(fmt)
-# logger.addHandler(console)
-
+#  This is the amount of wiki-pages after filtering a few in task #1
+COLLECTION_SIZE = 5391645
 TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
 
-def filter_articles(articles: pd.DataFrame) -> pd.DataFrame:
-    min_article_length = 20
-    is_long_enough = articles['text'].str.len() > min_article_length
-    return articles[is_long_enough]
 
-
-def parse_article_text(articles: pd.DataFrame) -> pd.DataFrame:
-    return articles['text']
-
-
-def preprocess_article(article: str) -> str:
-    return article.replace('-LRB-', '').replace('-RRB-', '')
-
-
-def tokenise_article(article: str) -> list:
-    return re.split(r'\s+|-', article)
-
-
-def filter_tokens(tokens: list) -> list:
-    regex = re.compile(r'^[a-zA-Z0-9]+$')
-    filtered_tokens = filter(regex.search, tokens)
-    return list(filtered_tokens)
-
-
-def normalise_article(article):
-    return article.lower()
-
-
-def process_normalise_tokenise_filter(raw_article: str) -> list:
-    article = preprocess_article(raw_article)
-    normalised_article = normalise_article(article)
-    all_tokens = tokenise_article(normalised_article)
-    return filter_tokens(all_tokens)
-
-
-def process_generate_idfs_batch(id: int) -> Counter:
+def process_generate_df_batch(id: int) -> Counter:
     colour = TERM_COLOURS[id % len(TERM_COLOURS)]
     print(colored('Start processing batch #{}'.format(id), colour, attrs=['bold']))
 
@@ -88,16 +49,17 @@ def process_generate_idfs_batch(id: int) -> Counter:
     return accumulated_batch_idfs
 
 
-def generate_idfs_all() -> list:
+def generate_df_all() -> list:
     start_index_inclusive = 1
-    stop_index_exclusive = 110
+    stop_index_exclusive = 3 if args.debug else 110
+    # NOTE: If debug, IDF values will be wrong (because collection size isn't valid)
 
     num_processes = cpu_count() # max(cpu_count() - 2, 2)
     print(colored('Detected {} CPUs, spawning {} processes'.format(cpu_count(), num_processes), attrs=['bold']))
     pool = Pool(processes=num_processes)
 
     # blocks until the result is ready
-    batch_idfs_results = pool.map(process_generate_idfs_batch, range(start_index_inclusive, stop_index_exclusive))
+    batch_idfs_results = pool.map(process_generate_df_batch, range(start_index_inclusive, stop_index_exclusive))
     pool.close()
 
     print('Merging {} partial results...'.format(len(batch_idfs_results)))
@@ -108,19 +70,33 @@ def generate_idfs_all() -> list:
     return accumulated_all_idfs.most_common()
 
 
+def get_words_with_idf(words_with_df: list) -> list:
+    result = []
+    for word_count in words_with_df:
+        word = word_count[0]
+        df = word_count[1]
+        idf = math.log10(COLLECTION_SIZE / df)
+        result.append((word, idf))
+    return result
+
+
 def export_result(result: list):
-    write_list_to_jsonl(GENERATED_IDFS_PATH, result)
+    write_list_to_jsonl(GENERATED_IDF_PATH, result)
 
 
 if __name__ == '__main__':
     start_time = time.time()
 
-    words_and_idfs = generate_idfs_all()
-    print(colored('Counted IDFs of {:,} words'.format(len(words_and_idfs)), attrs=['bold']))
-    print('Top 10 extract: {}'.format(words_and_idfs[0:10]))
+    words_with_df = generate_df_all()
+    print(colored('Counted frequencies of {:,} words'.format(len(words_with_df)), attrs=['bold']))
+
+    words_with_idf = get_words_with_idf(words_with_df)
+    print('Added inverse document frequencies')
+
+    print('Top 10 extract: {}'.format(words_with_idf[0:10]))
     print('Finished processing after {:.2f} seconds'.format(time.time() - start_time))
-    export_result(words_and_idfs)
+    export_result(words_with_idf)
 
     # Vocabulary size should be equal from the frequency count in task #1
     vocabulary = read_jsonl_and_map_to_df(GENERATED_COUNTS_PATH)[0]
-    assert(len(vocabulary) == len(words_and_idfs))
+    assert(len(vocabulary) == len(words_with_idf))
