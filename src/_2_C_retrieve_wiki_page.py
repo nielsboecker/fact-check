@@ -5,6 +5,7 @@ from _1_A_word_frequency_count import get_wiki_batch_path
 from _2_A_generate_wiki_page_mapping import get_submap_id, get_submap_path
 from jsonl_io import read_dict_from_json
 from termcolor import colored
+from wiki_document import WikiDocument
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--id", help="ID of a document to retrieve for test purposes")#, action="store_true")
@@ -34,7 +35,9 @@ def retrieve_wiki_page(page_id: str) -> dict:
 if __name__ == '__main__':
     if (args.id):
         start_time = time.time()
-        print(retrieve_wiki_page(args.id))
+        wiki_page_string = retrieve_wiki_page(args.id)
+        wiki_document = WikiDocument(wiki_page_string)
         print('Retrieved document "{}" after {:.5f} seconds'.format(args.id, time.time() - start_time))
+        print(colored(wiki_document.text, 'blue'))
     else:
         print('Please add ID to retrieve')
