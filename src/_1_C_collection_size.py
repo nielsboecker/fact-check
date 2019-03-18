@@ -5,7 +5,7 @@ from collections import Counter
 import pandas as pd
 from termcolor import colored
 
-from jsonl_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from _1_A_word_frequency_count import get_wiki_batch_path, filter_articles
 
 

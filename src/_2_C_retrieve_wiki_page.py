@@ -3,7 +3,7 @@ import time
 
 from _1_A_word_frequency_count import get_wiki_batch_path
 from _2_A_generate_wiki_page_mapping import get_submap_id, get_submap_path
-from jsonl_io import read_dict_from_json
+from json_io import read_dict_from_json
 from termcolor import colored
 from wiki_document import WikiDocument
 

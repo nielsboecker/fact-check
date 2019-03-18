@@ -9,7 +9,7 @@ DATA_DEV_LABELED_PATH = DATA_BASE_PATH + 'shared_task_dev.jsonl'
 # paths to generated interim data and output
 GENERATED_BASE_PATH = './generated/'
 GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
-GENERATED_IDFS_PATH = GENERATED_BASE_PATH + 'words_and_idfs.jsonl'
+GENERATED_IDF_PATH = GENERATED_BASE_PATH + 'words_with_idf.jsonl'
 GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY = GENERATED_BASE_PATH + 'wiki-page-batch-mappings/'
 
 # DATA_COLUMNS_UNLABELED = ['id', 'claim']

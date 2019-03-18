@@ -4,7 +4,7 @@ from multiprocessing import Pool, cpu_count
 import pyhash
 from _1_A_word_frequency_count import get_wiki_batch_path
 from constants import GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY
-from jsonl_io import read_jsonl_and_map_to_df, write_dict_to_json
+from json_io import read_jsonl_and_map_to_df, write_dict_to_json
 from termcolor import colored
 
 NUM_OF_SUBMAPS = 1000
