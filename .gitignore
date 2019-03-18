@@ -9,6 +9,7 @@ data/wiki-pages/
 
 # Python
 venv/*
+__pycache__/
 
 # Jupyter
 .ipynb_checkpoints/

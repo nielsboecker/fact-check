@@ -101,7 +101,7 @@ def generate_idfs_all() -> list:
     stop_index_exclusive = 110
 
     num_processes = cpu_count() # max(cpu_count() - 2, 2)
-    print(colored('Detected {} CPUs, spawing {} processes'.format(cpu_count(), num_processes), attrs=['bold']))
+    print(colored('Detected {} CPUs, spawning {} processes'.format(cpu_count(), num_processes), attrs=['bold']))
     pool = Pool(processes=num_processes)
 
     # blocks until the result is ready

@@ -10,6 +10,7 @@ DATA_DEV_LABELED_PATH = DATA_BASE_PATH + 'shared_task_dev.jsonl'
 GENERATED_BASE_PATH = './generated/'
 GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
 GENERATED_IDFS_PATH = GENERATED_BASE_PATH + 'words_and_idfs.jsonl'
+GENERATED_WIKI_BATCHES_FIRST_ROW_MAPPING_PATH = GENERATED_BASE_PATH + 'wiki_batch_first_row_mapping.jsonl'
 
 # DATA_COLUMNS_UNLABELED = ['id', 'claim']
 # DATA_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
