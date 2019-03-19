@@ -4,9 +4,10 @@ from collections import Counter
 from multiprocessing import Pool, cpu_count
 
 import argparse
-from _1_A_word_frequency_count import filter_articles, parse_article_text, process_normalise_tokenise_filter
-from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH
-from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from documentretrieval.document_processing import filter_articles, parse_article_text
+from documentretrieval.term_processing import process_normalise_tokenise_filter
+from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH
+from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from termcolor import colored
 
 parser = argparse.ArgumentParser()
@@ -16,7 +17,6 @@ args = parser.parse_args()
 #  This is the amount of wiki-pages after filtering a few in task #1
 COLLECTION_SIZE = 5391645
 TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
-
 
 
 def process_generate_df_batch(id: int) -> Counter:
@@ -39,13 +39,15 @@ def process_generate_df_batch(id: int) -> Counter:
         words_set = set(filtered_tokens)
 
         if (index % 5000 == 0):
-            print(colored('Processing document [{} / {}] of batch #{}...'.format(index, len(article_texts), id), colour))
+            print(
+                colored('Processing document [{} / {}] of batch #{}...'.format(index, len(article_texts), id), colour))
 
         # count for included words will be one
         words_in_doc = Counter(words_set)
         accumulated_batch_idfs += words_in_doc
 
-    print(colored('Finished processing batch #{} after {:.2f} seconds'.format(id, time.time() - start_time), colour, attrs=['bold']))
+    print(colored('Finished processing batch #{} after {:.2f} seconds'.format(id, time.time() - start_time), colour,
+                  attrs=['bold']))
     return accumulated_batch_idfs
 
 
@@ -54,7 +56,7 @@ def generate_df_all() -> list:
     stop_index_exclusive = 3 if args.debug else 110
     # NOTE: If debug, IDF values will be wrong (because collection size isn't valid)
 
-    num_processes = cpu_count() # max(cpu_count() - 2, 2)
+    num_processes = cpu_count()  # max(cpu_count() - 2, 2)
     print(colored('Detected {} CPUs, spawning {} processes'.format(cpu_count(), num_processes), attrs=['bold']))
     pool = Pool(processes=num_processes)
 
@@ -99,4 +101,4 @@ if __name__ == '__main__':
 
     # Vocabulary size should be equal from the frequency count in task #1
     vocabulary = read_jsonl_and_map_to_df(GENERATED_COUNTS_PATH)[0]
-    assert(len(vocabulary) == len(words_with_idf))
+    assert (len(vocabulary) == len(words_with_idf))

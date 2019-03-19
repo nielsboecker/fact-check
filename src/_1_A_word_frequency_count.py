@@ -1,64 +1,19 @@
-import re
 import time
 from collections import Counter
 from multiprocessing import cpu_count, Pool
 
-import nltk
-import pandas as pd
-from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH
-from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from nltk.corpus import stopwords
 from termcolor import colored
 
-nltk.download('stopwords')
-stop_words = set(stopwords.words('english'))
-
-
-def filter_articles(articles: pd.DataFrame) -> pd.DataFrame:
-    min_article_length = 20
-    is_long_enough = articles['text'].str.len() > min_article_length
-    return articles[is_long_enough]
-
-
-def parse_article_text(articles: pd.DataFrame) -> pd.DataFrame:
-    return articles['text']
-
-
-def preprocess_article(article: str) -> str:
-    return article.replace('-LRB-', '').replace('-RRB-', '')
-
-
-def tokenise_article(article: str) -> list:
-    return re.split(r'\s+|-', article)
-
-
-# Filter words that are too short, not consisting of alphanumeric characters, or are stopwords
-def filter_tokens(tokens: list) -> list:
-    regex = re.compile(r'^[a-zA-Z0-9]{2,}$')
-    filtered_tokens = filter(regex.search, tokens)
-    filtered_tokens = [word for word in filtered_tokens if word not in stop_words]
-    return list(filtered_tokens)
-
-
-def normalise_article(article):
-    return article.lower()
+from dataaccess.constants import GENERATED_COUNTS_PATH, get_wiki_batch_path
+from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from documentretrieval.document_processing import filter_articles, parse_article_text
+from documentretrieval.term_processing import process_normalise_tokenise_filter
 
 
 def get_word_counts(words: list) -> Counter:
     counter = Counter(words)
     print("Counted word frequencies for {:,} words ({:,} unique)".format(len(words), len(counter.keys())))
     return counter
-
-
-def process_normalise_tokenise_filter(raw_article: str) -> list:
-    article = preprocess_article(raw_article)
-    normalised_article = normalise_article(article)
-    all_tokens = tokenise_article(normalised_article)
-    return filter_tokens(all_tokens)
-
-
-def get_wiki_batch_path(batch_id):
-    return '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, batch_id)
 
 
 def process_count_batch(batch_id: int) -> Counter:
@@ -89,14 +44,10 @@ def process_count_all() -> list:
     return accumulated_word_count.most_common()
 
 
-def export_result(result: list):
-    write_list_to_jsonl(GENERATED_COUNTS_PATH, result)
-
-
 if __name__ == '__main__':
     start_time = time.time()
     word_count = process_count_all()
     print(colored('Counted frequencies of {:,} unique words'.format(len(word_count)), attrs=['bold']))
     print('Top 10 extract: {}'.format(word_count[0:10]))
     print('Finished processing after {:.2f} seconds'.format(time.time() - start_time))
-    export_result(word_count)
+    write_list_to_jsonl(GENERATED_COUNTS_PATH, word_count)

@@ -1,18 +1,10 @@
-import re
 import time
-from collections import Counter
 
-import pandas as pd
 from termcolor import colored
 
-from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from _1_A_word_frequency_count import get_wiki_batch_path, filter_articles
-
-
-def get_word_counts(words: list) -> Counter:
-    counter = Counter(words)
-    print("Counted word frequencies for {:,} words ({:,} unique)".format(len(words), len(counter.keys())))
-    return counter
+from dataaccess.constants import get_wiki_batch_path
+from dataaccess.json_io import read_jsonl_and_map_to_df
+from documentretrieval.document_processing import filter_articles
 
 
 def process_filter_count_batch(batch_id: int) -> int:

@@ -3,17 +3,22 @@ import time
 from multiprocessing import cpu_count, Pool
 from operator import itemgetter
 
-from _1_A_word_frequency_count import process_normalise_tokenise_filter
-from _2_C_retrieve_wiki_page import retrieve_wiki_page
-from _2_D_generate_inverted_index import get_shard_id, get_shard_path
-from constants import GENERATED_IDF_PATH, DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY
-from json_io import read_jsonl_and_map_to_df, read_dict_from_json, write_dict_to_json
+import argparse
+
+from documentretrieval.term_processing import process_normalise_tokenise_filter
+from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
+from dataaccess.constants import get_inverted_index_shard_id, get_shard_path
+from dataaccess.constants import GENERATED_IDF_PATH, DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY
+from dataaccess.json_io import read_jsonl_and_map_to_df, read_dict_from_json, write_dict_to_json
 from termcolor import colored
 
-DEBUG = True
+parser = argparse.ArgumentParser()
+parser.add_argument("--debug", help="only use subset of data", action="store_true")
+args = parser.parse_args()
+
 DOCS_PER_CLAIM = 5
 
-words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop = False)
+words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
 cached_inverted_index_shards = {}
 
 
@@ -30,7 +35,7 @@ def read_inverted_index_shard(shard_id: int) -> dict:
 
 
 def get_occurrences(term: str) -> list:
-    shard_id = get_shard_id(term)
+    shard_id = get_inverted_index_shard_id(term)
     shard = cached_inverted_index_shards.setdefault(shard_id, read_inverted_index_shard(shard_id))
     return shard[term]
 
@@ -70,7 +75,7 @@ def retrieve_document_for_claim(claim_tuple: tuple):
     docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
     result_docs = docs_with_similarity_scores[:DOCS_PER_CLAIM]
 
-    if (DEBUG):
+    if (args.debug):
         print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
         for doc in result_docs:
             page_id = doc[0]
@@ -83,7 +88,7 @@ def retrieve_document_for_claim(claim_tuple: tuple):
 
 def retrieve_documents_for_all_claims():
     claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH)
-    if (DEBUG):
+    if (args.debug):
         claims = claims.head(n=10)
 
     print(('Detected {} CPUs'.format(cpu_count())))

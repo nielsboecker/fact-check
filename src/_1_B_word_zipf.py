@@ -3,8 +3,8 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 
-from constants import GENERATED_COUNTS_PATH, GENERATED_BASE_PATH
-from json_io import read_jsonl_and_map_to_df
+from dataaccess.constants import GENERATED_COUNTS_PATH, GENERATED_BASE_PATH
+from dataaccess.json_io import read_jsonl_and_map_to_df
 
 
 def verify_plot_zipfs_law():

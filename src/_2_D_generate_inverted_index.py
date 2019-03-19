@@ -3,22 +3,15 @@ import time
 from collections import Counter
 from multiprocessing import cpu_count, Pool
 
-import pyhash
-from _1_A_word_frequency_count import get_wiki_batch_path, filter_articles, process_normalise_tokenise_filter
-from constants import GENERATED_INVERTED_INDEX_DIRECTORY
-from json_io import read_jsonl_and_map_to_df, write_dict_to_json
+from dataaccess.constants import get_wiki_batch_path, NUM_OF_INVERTED_INDEX_SHARDS, get_inverted_index_shard_id, \
+    get_shard_path
+from documentretrieval.document_processing import filter_articles
+from documentretrieval.term_processing import process_normalise_tokenise_filter
+from dataaccess.json_io import read_jsonl_and_map_to_df, write_dict_to_json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
 args = parser.parse_args()
-
-
-NUM_OF_SHARDS = 1000
-hasher = pyhash.super_fast_hash()
-
-
-def get_shard_id(page_id: str) -> int:
-    return hasher(page_id) % NUM_OF_SHARDS
 
 
 def generate_partial_subindex_for_batch(batch_id: int) -> dict:
@@ -42,10 +35,6 @@ def generate_partial_subindex_for_batch(batch_id: int) -> dict:
     return subindex
 
 
-def get_shard_path(shard_id: int):
-    return '{}{}.json'.format(GENERATED_INVERTED_INDEX_DIRECTORY, shard_id)
-
-
 def store_shard(shard_id: int, shard: dict):
     shard_path = get_shard_path(shard_id)
     write_dict_to_json(shard_path, shard)
@@ -62,7 +51,7 @@ def generate_inverted_index_complete():
     # pool.close()
 
     print('Merging {} partial results...'.format(len(partial_subindices)))
-    inverted_index_shards = {i: {} for i in range(NUM_OF_SHARDS)}
+    inverted_index_shards = {i: {} for i in range(NUM_OF_INVERTED_INDEX_SHARDS)}
 
     # For each partial result...
     for subindex in partial_subindices:
@@ -71,7 +60,7 @@ def generate_inverted_index_complete():
             # ...and merge with the corresponding entry in the corresponding shard
             term = entry[0]
             doc_occurrences = entry[1]
-            shard_id = get_shard_id(term)
+            shard_id = get_inverted_index_shard_id(term)
             inverted_index_shards[shard_id].setdefault(term, []).extend(doc_occurrences)
 
     # Store shards on disk
