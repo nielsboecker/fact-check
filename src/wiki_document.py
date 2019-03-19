@@ -2,6 +2,8 @@ import json
 
 from termcolor import colored
 
+DEBUG = False
+
 
 def extract_lines(lines_json_string: str):
     raw_lines = lines_json_string.split('\n')
@@ -29,7 +31,8 @@ class WikiDocument:
         self.lines = extract_lines(data['lines'])
 
     def __str__(self):
-        return 'ID:\t\t{}\nTEXT:\t{}\n'.format(colored(self.id, attrs=['bold']), colored(self.text, attrs=['underline']))
+        return 'ID:\t\t{}\nTEXT:\t{}\n'.format(colored(self.id, attrs=['bold']),
+                                               colored(self.text, attrs=['underline']))
 
 
 class WikiLine:
@@ -39,6 +42,8 @@ class WikiLine:
         self.anchors = anchors
 
 
-test_doc = WikiDocument(
-    r'{"id": "Hello", "text": "Hello is a salutation or greeting in the English language . It is first attested in writing from 1826 . ", "lines": "0\tHello is a salutation or greeting in the English language .\tsalutation\tsalutation\tgreeting\tgreeting habits\tEnglish language\tEnglish language\n1\tIt is first attested in writing from 1826 .\n2\t"}')
-print(test_doc)
+if __name__ == '__main__':
+    if (DEBUG):
+        test_doc = WikiDocument(
+            r'{"id": "Hello", "text": "Hello is a salutation or greeting in the English language . It is first attested in writing from 1826 . ", "lines": "0\tHello is a salutation or greeting in the English language .\tsalutation\tsalutation\tgreeting\tgreeting habits\tEnglish language\tEnglish language\n1\tIt is first attested in writing from 1826 .\n2\t"}')
+        print(test_doc)

@@ -11,7 +11,6 @@ from json_io import read_jsonl_and_map_to_df, read_dict_from_json, write_dict_to
 from termcolor import colored
 
 DEBUG = True
-#TEST_CLAIM_IDs = [75397, 150448, 214861, 156709, 129629, 33078, 6744, 226034, 40190, 76253]
 DOCS_PER_CLAIM = 5
 
 words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop = False)
@@ -65,15 +64,16 @@ def retrieve_document_for_claim(claim_tuple: tuple):
             doc_candidates.setdefault(page_id, []).append((tf, idf))
 
     # Compute TF-IDF similarity for docs
-    docs_with_similarity_scores = map(compute_tfidf_similariy, doc_candidates.items())
+    docs_with_similarity_scores = list(map(compute_tfidf_similariy, doc_candidates.items()))
 
     # Sort by similarity and limit to top results
     result_docs = docs_with_similarity_scores.sort(key=itemgetter(1))[:DOCS_PER_CLAIM]
     if (DEBUG):
+        print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
         for doc in result_docs:
             page_id = doc[0]
             wiki_page = retrieve_wiki_page(page_id)
-            print(wiki_page)
+            print('\t{}'.format(wiki_page))
     else:
         result_path = '{}{}'.format(RETRIEVED_TFIDF_DIRECTORY, claim_id)
         write_dict_to_json(result_path, result_docs)
