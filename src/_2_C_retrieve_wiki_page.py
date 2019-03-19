@@ -12,7 +12,6 @@ parser.add_argument("--id", help="ID of a document to retrieve for test purposes
 args = parser.parse_args()
 
 
-
 def retrieve_wiki_page(page_id: str) -> dict:
     # Use supmap id to retrieve the actual mapping
     submap_id = get_submap_id(page_id)

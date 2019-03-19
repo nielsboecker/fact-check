@@ -1,14 +1,12 @@
-import time
-
 import argparse
+import time
 from collections import Counter
 from multiprocessing import cpu_count, Pool
-from constants import DATA_WIKI_PATH, GENERATED_INVERTED_INDEX_DIRECTORY
-from json_io import read_jsonl_and_map_to_df, write_dict_to_json
-from _1_A_word_frequency_count import get_wiki_batch_path, filter_articles, parse_article_text, process_normalise_tokenise_filter
 
 import pyhash
-from termcolor import colored
+from _1_A_word_frequency_count import get_wiki_batch_path, filter_articles, process_normalise_tokenise_filter
+from constants import GENERATED_INVERTED_INDEX_DIRECTORY
+from json_io import read_jsonl_and_map_to_df, write_dict_to_json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
@@ -44,8 +42,12 @@ def generate_partial_subindex_for_batch(batch_id: int) -> dict:
     return subindex
 
 
+def get_shard_path(shard_id: int):
+    return '{}{}.json'.format(GENERATED_INVERTED_INDEX_DIRECTORY, shard_id)
+
+
 def store_shard(shard_id: int, shard: dict):
-    shard_path = '{}{}.json'.format(GENERATED_INVERTED_INDEX_DIRECTORY, shard_id)
+    shard_path = get_shard_path(shard_id)
     write_dict_to_json(shard_path, shard)
 
 
