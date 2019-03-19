@@ -15,7 +15,6 @@ def get_submap_id(page_id: str) -> int:
     return hasher(page_id) % NUM_OF_SUBMAPS
 
 
-
 def get_submap_path(submap_id: int) -> str:
     return '{}{:03}.jsonl'.format(GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY, submap_id)
 

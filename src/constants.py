@@ -11,6 +11,7 @@ GENERATED_BASE_PATH = './generated/'
 GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
 GENERATED_IDF_PATH = GENERATED_BASE_PATH + 'words_with_idf.jsonl'
 GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY = GENERATED_BASE_PATH + 'wiki-page-batch-mappings/'
+GENERATED_INVERTED_INDEX_DIRECTORY = GENERATED_BASE_PATH + 'inverted-index/'
 
 # DATA_COLUMNS_UNLABELED = ['id', 'claim']
 # DATA_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
