@@ -67,13 +67,15 @@ def retrieve_document_for_claim(claim_tuple: tuple):
     docs_with_similarity_scores = list(map(compute_tfidf_similariy, doc_candidates.items()))
 
     # Sort by similarity and limit to top results
-    result_docs = docs_with_similarity_scores.sort(key=itemgetter(1))[:DOCS_PER_CLAIM]
+    docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
+    result_docs = docs_with_similarity_scores[:DOCS_PER_CLAIM]
+
     if (DEBUG):
         print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
         for doc in result_docs:
             page_id = doc[0]
             wiki_page = retrieve_wiki_page(page_id)
-            print('\t{}'.format(wiki_page))
+            print(wiki_page)
     else:
         result_path = '{}{}'.format(RETRIEVED_TFIDF_DIRECTORY, claim_id)
         write_dict_to_json(result_path, result_docs)
