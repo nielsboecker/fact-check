@@ -6,3 +6,4 @@ termcolor
 scipy
 argparse
 pyhash
+nltk

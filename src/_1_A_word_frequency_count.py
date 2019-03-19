@@ -3,9 +3,15 @@ import time
 from collections import Counter
 from multiprocessing import cpu_count, Pool
 
+import nltk
 import pandas as pd
 from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH
 from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from nltk.corpus import stopwords
+from termcolor import colored
+
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
 
 
 def filter_articles(articles: pd.DataFrame) -> pd.DataFrame:
@@ -26,9 +32,11 @@ def tokenise_article(article: str) -> list:
     return re.split(r'\s+|-', article)
 
 
+# Filter words that are too short, not consisting of alphanumeric characters, or are stopwords
 def filter_tokens(tokens: list) -> list:
-    regex = re.compile(r'^[a-zA-Z0-9]+$')
+    regex = re.compile(r'^[a-zA-Z0-9]{2,}$')
     filtered_tokens = filter(regex.search, tokens)
+    filtered_tokens = [word for word in filtered_tokens if word not in stop_words]
     return list(filtered_tokens)
 
 
