@@ -1,10 +1,9 @@
 import re
 import time
 from collections import Counter
+from multiprocessing import cpu_count, Pool
 
 import pandas as pd
-from termcolor import colored
-
 from constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH
 from json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 
@@ -72,8 +71,13 @@ def process_count_all() -> list:
     start_index_inclusive = 1
     stop_index_exclusive = 110
     accumulated_word_count = Counter()
-    for id in range(start_index_inclusive, stop_index_exclusive):
-        accumulated_word_count += process_count_batch(id)
+
+    # Process in multiple blocking processes
+    print(('Detected {} CPUs'.format(cpu_count())))
+    pool = Pool(processes=cpu_count())
+    batch_partial_counts = pool.map(process_count_batch, range(start_index_inclusive, stop_index_exclusive))
+    for batch_result in batch_partial_counts:
+        accumulated_word_count += batch_result
     return accumulated_word_count.most_common()
 
 
