@@ -44,4 +44,4 @@ def get_inverted_index_shard_id(page_id: str) -> int:
 
 
 def get_shard_path(shard_id: int):
-    return '{}{}.json'.format(GENERATED_INVERTED_INDEX_DIRECTORY, shard_id)
+    return '{}{:04}.json'.format(GENERATED_INVERTED_INDEX_DIRECTORY, shard_id)
