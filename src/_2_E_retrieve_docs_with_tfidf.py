@@ -15,6 +15,7 @@ from documentretrieval.term_processing import process_normalise_tokenise_filter
 from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
 parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)', type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true', default=False)
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true', default=False)
@@ -67,8 +68,7 @@ def retrieve_document_for_claim(claim: str, claim_id: int):
         docs = index_entry['docs']
         for doc in docs:
             page_id = doc[0]
-            tf = doc[1]
-            relative_tf = doc[2]
+            tf = doc[1] if args.variant == 'raw_count' else doc[2]
             doc_candidates.setdefault(page_id, []).append((tf, idf))
 
     # Compute TF-IDF similarity for docs
