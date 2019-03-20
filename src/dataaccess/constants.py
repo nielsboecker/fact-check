@@ -24,7 +24,7 @@ GENERATED_INVERTED_INDEX_DIRECTORY = GENERATED_BASE_PATH + 'inverted-index/'
 
 # Retrieved documents
 RETRIEVED_BASE_PATH = './retrieved/'
-RETRIEVED_TFIDF_DIRECTORY = RETRIEVED_BASE_PATH + 'tf-idf'
+RETRIEVED_TFIDF_DIRECTORY = RETRIEVED_BASE_PATH + 'tf-idf/'
 
 
 def get_wiki_batch_path(batch_id):

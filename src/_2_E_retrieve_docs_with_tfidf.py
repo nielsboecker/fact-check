@@ -55,11 +55,8 @@ def compute_tfidf_similariy(doc_with_coordination_terms: list) -> tuple:
     return (page_id, similarity_score)
 
 
-def retrieve_document_for_claim(claim_row: pd.Series):
-    claim_id = claim_row['id']
-    claim = claim_row['claim']
-
-    print(colored('Retrieving documents for claim "{}"'.format(claim)))
+def retrieve_document_for_claim(claim: str, claim_id: int):
+    print(colored('Retrieving documents for claim [{}]: "{}"'.format(claim_id, claim)))
     preprocessed_claim = preprocess_claim(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
 
@@ -87,8 +84,14 @@ def retrieve_document_for_claim(claim_row: pd.Series):
             wiki_page = retrieve_wiki_page(page_id)
             print(wiki_page)
     else:
-        result_path = '{}{}'.format(RETRIEVED_TFIDF_DIRECTORY, claim_id)
+        result_path = '{}{}.jsonl'.format(RETRIEVED_TFIDF_DIRECTORY, claim_id)
         write_list_to_jsonl(result_path, result_docs)
+
+
+def retrieve_document_for_claim_row(claim_row: tuple):
+    claim_id = claim_row[1]['id']
+    claim = claim_row[1]['claim']
+    retrieve_document_for_claim(claim, claim_id)
 
 
 def retrieve_documents_for_all_claims():
@@ -98,16 +101,16 @@ def retrieve_documents_for_all_claims():
     # Process in multiple blocking processes4
     # FIXME iter
     if (args.limit):
-        pool.map(retrieve_document_for_claim, claims.head(n=10).iterrows())
+        pool.map(retrieve_document_for_claim_row, claims.head(n=10).iterrows())
     else:
-        pool.map(retrieve_document_for_claim, claims.iterrows())
+        pool.map(retrieve_document_for_claim_row, claims.iterrows())
 
 
 if __name__ == '__main__':
     start_time = time.time()
     if (args.id):
         claim = claims.loc[args.id]
-        document = retrieve_document_for_claim(claim)
+        document = retrieve_document_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()
     print('Finished retrrieval after {:.2f} seconds'.format(time.time() - start_time))
