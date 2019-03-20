@@ -22,7 +22,6 @@ args = parser.parse_args()
 
 DOCS_PER_CLAIM = 5
 
-words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
 claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
 cached_inverted_index_shards = {}
 
@@ -36,10 +35,10 @@ def preprocess_claim(claim: str) -> str:
 def read_inverted_index_shard(shard_id: int) -> dict:
     shard_path = get_shard_path(shard_id)
     shard = read_dict_from_json(shard_path)
-    return shard[1]
+    return shard
 
 
-def get_occurrences(term: str) -> list:
+def get_index_entry_for_term(term: str) -> dict:
     shard_id = get_inverted_index_shard_id(term)
     shard = cached_inverted_index_shards.setdefault(shard_id, read_inverted_index_shard(shard_id))
     return shard[term]
@@ -63,11 +62,13 @@ def retrieve_document_for_claim(claim: str, claim_id: int):
     doc_candidates = {}
     # For all terms, group by document and gather TF and IDF values
     for term in claim_terms:
-        idf = words_with_idf.loc[term]['idf']
-        occurrences = get_occurrences(term)
-        for occurrence in occurrences:
-            page_id = occurrence[0]
-            tf = occurrence[1]
+        index_entry = get_index_entry_for_term(term)
+        idf = index_entry['idf']
+        docs = index_entry['docs']
+        for doc in docs:
+            page_id = doc[0]
+            tf = doc[1]
+            relative_tf = doc[2]
             doc_candidates.setdefault(page_id, []).append((tf, idf))
 
     # Compute TF-IDF similarity for docs
@@ -99,7 +100,6 @@ def retrieve_documents_for_all_claims():
     pool = Pool(processes=cpu_count())
 
     # Process in multiple blocking processes4
-    # FIXME iter
     if (args.limit):
         pool.map(retrieve_document_for_claim_row, claims.head(n=10).iterrows())
     else:
