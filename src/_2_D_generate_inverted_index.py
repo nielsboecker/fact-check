@@ -1,7 +1,7 @@
 import argparse
 import time
 from collections import Counter
-from multiprocessing import cpu_count
+from multiprocessing import cpu_count, Pool
 from multiprocessing.pool import ThreadPool
 
 from termcolor import colored
@@ -72,13 +72,13 @@ def enrich_shard_with_idf_values(shard_map_item: tuple) -> tuple:
 
 def generate_inverted_index_complete():
     print(('Detected {} CPUs'.format(cpu_count())))
-    pool = ThreadPool(processes=cpu_count())
+    process_pool = Pool(processes=cpu_count())
 
     start_index_inclusive = 1
     stop_index_exclusive = 3 if args.debug else 110
 
     # Process in multiple blocking processes
-    partial_subindices = pool.map(generate_partial_subindex_for_batch,
+    partial_subindices = process_pool.map(generate_partial_subindex_for_batch,
                                   range(start_index_inclusive, stop_index_exclusive))
 
     print(colored('Merging {} partial results...'.format(len(partial_subindices)), attrs=['bold']))
@@ -100,11 +100,12 @@ def generate_inverted_index_complete():
             shard_index_entry_for_term.setdefault('docs', []).extend(docs)
 
     # Adding IDF values in parallel
-    enriched_inverted_index_shards = pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
+    thread_pool = ThreadPool(processes=cpu_count())
+    enriched_inverted_index_shards = thread_pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
 
     # Store shards on disk
     print(colored('Storing inverted index shards on disk...', attrs=['bold']))
-    pool.starmap(store_shard, enriched_inverted_index_shards)
+    process_pool.starmap(store_shard, enriched_inverted_index_shards)
 
 
 if __name__ == '__main__':
