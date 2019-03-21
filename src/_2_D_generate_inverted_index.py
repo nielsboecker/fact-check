@@ -1,7 +1,8 @@
 import argparse
 import time
 from collections import Counter
-from multiprocessing import cpu_count, Pool
+from multiprocessing import cpu_count
+from multiprocessing.pool import ThreadPool
 
 from termcolor import colored
 
@@ -15,7 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
 args = parser.parse_args()
 
-# words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
+words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
 
 
 # def init_index_entry_for_term(term: str):
@@ -55,23 +56,23 @@ def store_shard(shard_id: int, shard: dict):
     write_dict_to_json(shard_path, shard)
 
 
-#def enrich_shard_with_idf_values(shard_map_item: tuple) -> tuple:
-#    shard_id = shard_map_item[0]
-#    print('Enriching data with IDFs for shard #{}'.format(shard_id))
-#    shard_data = shard_map_item[1]
-#    enriched_data = {}
-#
-#    for item in shard_data.items():
-#        term = item[0]
-#        term_data = item[1] # has only 'docs' at this point
-#        term_data['idf'] = words_with_idf.loc[term]['idf']
-#        enriched_data[term] = term_data
-#
-#    return (shard_id, enriched_data)
+def enrich_shard_with_idf_values(shard_map_item: tuple) -> tuple:
+    shard_id = shard_map_item[0]
+    print('Enriching data with IDFs for shard #{}'.format(shard_id))
+    shard_data = shard_map_item[1]
+    enriched_data = {}
+
+    for item in shard_data.items():
+        term = item[0]
+        term_data = item[1] # has only 'docs' at this point
+        term_data['idf'] = words_with_idf.loc[term]['idf']
+        enriched_data[term] = term_data
+
+    return (shard_id, enriched_data)
 
 def generate_inverted_index_complete():
     print(('Detected {} CPUs'.format(cpu_count())))
-    pool = Pool(processes=cpu_count())
+    pool = ThreadPool(processes=cpu_count())
 
     start_index_inclusive = 1
     stop_index_exclusive = 3 if args.debug else 110
@@ -98,12 +99,12 @@ def generate_inverted_index_complete():
             shard_index_entry_for_term = shard.setdefault(term, {})
             shard_index_entry_for_term.setdefault('docs', []).extend(docs)
 
-#    # Adding IDF values in parallel
-#    enriched_inverted_index_shards = pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
+    # Adding IDF values in parallel
+    enriched_inverted_index_shards = pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
 
     # Store shards on disk
     print(colored('Storing inverted index shards on disk...', attrs=['bold']))
-    pool.starmap(store_shard, inverted_index_shards)
+    pool.starmap(store_shard, enriched_inverted_index_shards)
 
 
 if __name__ == '__main__':
