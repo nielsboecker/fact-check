@@ -31,7 +31,7 @@ def read_jsonl_and_map_to_df(input_path: str, columns: list = None) -> pd.DataFr
         for fact in reader:
             items.append(fact)
     itemsDF = pd.DataFrame(items, columns=columns)
-    print(colored('Read {} lines from "{}"'.format(len(items), input_path), attrs=['bold']))
+    print('Read {} lines from "{}"'.format(len(items), input_path))
     return itemsDF
 
 
