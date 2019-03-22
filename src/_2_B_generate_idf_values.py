@@ -4,7 +4,7 @@ from collections import Counter
 from multiprocessing import Pool, cpu_count
 
 import argparse
-from documentretrieval.document_processing import filter_articles, parse_article_text
+from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
@@ -27,9 +27,8 @@ def process_generate_df_batch(id: int) -> Counter:
 
     batch_file_path = '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, id)
     all_articles = read_jsonl_and_map_to_df(batch_file_path, ['text'])
-    filtered_articles = filter_articles(all_articles)
-    # print('Using {} articles after filtering'.format(len(filtered_articles)))
-    article_texts = parse_article_text(filtered_articles)
+    filtered_articles = filter_documents(all_articles)
+    article_texts = reduce_document_to_text_column(filtered_articles)
 
     accumulated_batch_idfs = Counter()
 

@@ -9,7 +9,7 @@ from termcolor import colored
 from dataaccess.constants import get_wiki_batch_path, get_inverted_index_shard_id, \
     get_shard_path, GENERATED_IDF_PATH
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_dict_to_json
-from documentretrieval.document_processing import filter_articles
+from documentretrieval.document_processing import filter_documents
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 
 parser = argparse.ArgumentParser()
@@ -29,8 +29,7 @@ words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).s
 def generate_partial_subindex_for_batch(batch_id: int) -> dict:
     batch_file_path = get_wiki_batch_path(batch_id)
     all_articles = read_jsonl_and_map_to_df(batch_file_path, ['id', 'text'])
-    filtered_wiki_pages = filter_articles(all_articles)
-    print('Using {} articles after filtering'.format(len(filtered_wiki_pages)))
+    filtered_wiki_pages = filter_documents(all_articles)
 
     subindex = {}
     for raw_article in filtered_wiki_pages.iterrows():

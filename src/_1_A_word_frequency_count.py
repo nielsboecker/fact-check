@@ -6,7 +6,7 @@ from termcolor import colored
 
 from dataaccess.constants import GENERATED_COUNTS_PATH, get_wiki_batch_path
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from documentretrieval.document_processing import filter_articles, parse_article_text
+from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 
 
@@ -19,9 +19,8 @@ def get_word_counts(words: list) -> Counter:
 def process_count_batch(batch_id: int) -> Counter:
     batch_file_path = get_wiki_batch_path(batch_id)
     all_articles = read_jsonl_and_map_to_df(batch_file_path, ['text'])
-    filtered_articles = filter_articles(all_articles)
-    print('Using {} articles after filtering'.format(len(filtered_articles)))
-    article_texts = parse_article_text(filtered_articles)
+    filtered_articles = filter_documents(all_articles)
+    article_texts = reduce_document_to_text_column(filtered_articles)
 
     combined_tokens = []
     for raw_article in article_texts:
