@@ -13,6 +13,8 @@ from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_thread_pool
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
+# parser.add_argument("--add_idf", help="enrich each term entry with idf value", action="store_true")
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
 args = parser.parse_args()
 
@@ -30,26 +32,29 @@ def generate_partial_subindex_for_batch(batch_id: int) -> dict:
     batch_file_path = get_wiki_batch_path(batch_id)
     all_articles = read_jsonl_and_map_to_df(batch_file_path, ['id', 'text'])
     filtered_wiki_pages = filter_documents(all_articles)
+    if args.debug:
+        filtered_wiki_pages = filtered_wiki_pages[:42]
 
     subindex = {}
-    for raw_article in filtered_wiki_pages.iterrows():
-        page_id = raw_article[1]['id']
-        filtered_tokens = process_normalise_tokenise_filter(raw_article[1]['text'])
+    for raw_document in filtered_wiki_pages.iterrows():
+        page_id = raw_document[1]['id']
+        filtered_tokens = process_normalise_tokenise_filter(raw_document[1]['text'])
         words_counter = Counter(filtered_tokens)
         # Invert word -> doc and add raw and relative term count
         for count in words_counter.items():
             term = count[0]
             raw_count = count[1]
-            relative_count = raw_count / len(filtered_tokens)
-            subindex.setdefault(term, { 'docs': [] })['docs'].append((page_id, raw_count, relative_count))
+            tf = raw_count if args.variant == 'raw_count' else raw_count / len(filtered_tokens)
+            idf = words_with_idf.loc[term]['idf']
+            tfidf = tf * idf
+            subindex.setdefault(term, { 'docs': [] })['docs'].append((page_id, tfidf))
 
-    write_dict_to_json('./temp/{}'.format(batch_id), {})
     print('Finished processing batch #{}'.format(batch_id))
     return subindex
 
 
 def store_shard(shard_id: int, shard: dict):
-    if (shard_id % 100 == 0):
+    if shard_id % 500 == 0:
         print('Storing shard #{}...'.format(shard_id))
     shard_path = get_shard_path(shard_id)
     write_dict_to_json(shard_path, shard)
@@ -99,12 +104,13 @@ def generate_inverted_index_complete():
             shard_index_entry_for_term.setdefault('docs', []).extend(docs)
 
     # Adding IDF values in parallel
-    thread_pool = get_thread_pool()
-    enriched_inverted_index_shards = thread_pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
+    # Not needed anymore, as TFIDF per term directly stored in index entry
+    # thread_pool = get_thread_pool()
+    # enriched_inverted_index_shards = thread_pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
 
     # Store shards on disk
     print(colored('Storing inverted index shards on disk...', attrs=['bold']))
-    process_pool.starmap(store_shard, enriched_inverted_index_shards)
+    process_pool.starmap(store_shard, inverted_index_shards.items())
 
 
 if __name__ == '__main__':

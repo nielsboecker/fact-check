@@ -3,7 +3,7 @@ import pyhash
 # DATA_COLUMNS_UNLABELED = ['id', 'claim']
 CLAIMS_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
 NUM_OF_WIKI_ID_TO_BATCH_SUBMAPS = 1000
-NUM_OF_INVERTED_INDEX_SHARDS = 2500
+NUM_OF_INVERTED_INDEX_SHARDS = 10000
 
 hasher = pyhash.super_fast_hash()
 
