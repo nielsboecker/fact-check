@@ -2,7 +2,6 @@ import argparse
 import time
 from collections import Counter
 from multiprocessing import cpu_count, Pool
-from multiprocessing.pool import ThreadPool
 
 from termcolor import colored
 
@@ -11,6 +10,7 @@ from dataaccess.constants import get_wiki_batch_path, get_inverted_index_shard_i
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_dict_to_json
 from documentretrieval.document_processing import filter_documents
 from documentretrieval.term_processing import process_normalise_tokenise_filter
+from util.theads_processes import get_thread_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
@@ -99,7 +99,7 @@ def generate_inverted_index_complete():
             shard_index_entry_for_term.setdefault('docs', []).extend(docs)
 
     # Adding IDF values in parallel
-    thread_pool = ThreadPool(processes=cpu_count())
+    thread_pool = get_thread_pool()
     enriched_inverted_index_shards = thread_pool.map(enrich_shard_with_idf_values, inverted_index_shards.items())
 
     # Store shards on disk

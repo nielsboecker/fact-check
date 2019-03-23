@@ -35,6 +35,10 @@ def read_jsonl_and_map_to_df(input_path: str, columns: list = None) -> pd.DataFr
     return itemsDF
 
 
+def write_dict_to_jsonl(output_path: str, data: dict):
+    write_list_to_jsonl(output_path, [i for i in data.items()])
+
+
 def write_list_to_jsonl(output_path: str, data: list):
     create_dir_if_not_exists(output_path)
     with jsonlines.open(output_path, mode='w') as writer:
