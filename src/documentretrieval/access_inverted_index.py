@@ -1,8 +1,6 @@
 from dataaccess.constants import get_inverted_index_shard_id, get_shard_path
 from dataaccess.json_io import read_dict_from_json
 
-cached_inverted_index_shards = {}
-
 
 def read_inverted_index_shard(shard_id: int) -> dict:
     shard_path = get_shard_path(shard_id)
@@ -12,5 +10,5 @@ def read_inverted_index_shard(shard_id: int) -> dict:
 
 def get_index_entry_for_term(term: str) -> dict:
     shard_id = get_inverted_index_shard_id(term)
-    shard = cached_inverted_index_shards.setdefault(shard_id, read_inverted_index_shard(shard_id))
+    shard = read_inverted_index_shard(shard_id)
     return shard[term]
