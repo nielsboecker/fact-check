@@ -5,6 +5,7 @@ data/wiki-pages/
 
 # output files
 generated/*
+retrieved/*
 
 # IntelliJ
 *.iml

@@ -36,6 +36,10 @@ def get_query_likelihood_score(claim_terms: list, doc_with_coordination_terms: t
     coordination_terms_for_doc = doc_with_coordination_terms[1]
     doc_length = doc_length_mapping.loc[page_id]['length']
 
+    # if any of the claim terms is missing from doc, we can short circuit this computation
+    if any([term not in coordination_terms_for_doc.keys() for term in claim_terms]):
+        return page_id, 0
+
     term_probabilites = []
     for term in claim_terms:
         if term in coordination_terms_for_doc.keys():
@@ -60,12 +64,17 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     # query likelihood scores for each claim-doc combination
     docs_with_query_likelihood_scores = [get_query_likelihood_score(claim_terms, doc_with_terms) for doc_with_terms in doc_candidates.items()]
 
+    # zero values lead to random retrievals if all documents evaluate to zero, so rather show no results at all
+    docs_with_query_likelihood_scores = list(filter(lambda x: x[1] != 0, docs_with_query_likelihood_scores))
+
     # sort by query likelihood and limit to top results
     docs_with_query_likelihood_scores.sort(key=itemgetter(1), reverse=True)
     result_docs = docs_with_query_likelihood_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
     if (args.print):
         print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
+        if not result_docs:
+            print('-- No documents found --')
         for doc in result_docs:
             page_id = doc[0]
             wiki_page = retrieve_wiki_page(page_id)
