@@ -61,6 +61,7 @@ def store_shard(shard_id: int, shard: dict):
 
 
 def enrich_shard_with_idf_values(shard_map_item: tuple) -> tuple:
+    # Deprecated: This method is not currently used
     shard_id = shard_map_item[0]
     print('Enriching data with IDFs for shard #{}'.format(shard_id))
     shard_data = shard_map_item[1]

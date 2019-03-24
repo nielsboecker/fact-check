@@ -19,7 +19,7 @@ GENERATED_BASE_PATH = './generated/'
 GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
 GENERATED_IDF_PATH = GENERATED_BASE_PATH + 'words_with_idf.jsonl'
 GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY = GENERATED_BASE_PATH + 'wiki_page_batch_mappings/'
-GENERATED_DOCUMENT_NORMS_MAPPING = GENERATED_BASE_PATH + 'docs_to_norms_mapping.json'
+GENERATED_DOCUMENT_NORMS_MAPPING = GENERATED_BASE_PATH + 'docs_to_norms_mapping.jsonl'
 GENERATED_INVERTED_INDEX_DIRECTORY = GENERATED_BASE_PATH + 'inverted_index/'
 
 # Retrieved documents
