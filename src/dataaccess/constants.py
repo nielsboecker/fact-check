@@ -25,10 +25,12 @@ GENERATED_INVERTED_INDEX_DIRECTORY = GENERATED_BASE_PATH + 'inverted_index/'
 
 # Retrieved documents
 RETRIEVED_BASE_PATH = './retrieved/'
-RETRIEVED_TFIDF_DIRECTORY = RETRIEVED_BASE_PATH + 'tf-idf/'
+RETRIEVED_TFIDF_DIRECTORY = RETRIEVED_BASE_PATH + 'tfidf/'
+RETRIEVED_PROBABILISTIC_DIRECTORY = RETRIEVED_BASE_PATH + 'probabilistic_nosmoothing/'
 
 # Retrieval parameters
 DOCS_TO_RETRIEVE_PER_CLAIM = 5
+
 
 def get_wiki_batch_path(batch_id):
     return '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, batch_id)

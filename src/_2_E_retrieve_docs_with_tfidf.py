@@ -44,7 +44,7 @@ def get_tfidf_vector_for_document(coordination_terms_for_doc: dict, claim_terms:
 
 def get_tfidf_vector_for_claim(claim_terms: list):
     claim_terms_with_occurrences = Counter(claim_terms)
-    claim_vector = [] #np.zeros(len(claim_terms_with_occurrences))
+    claim_vector = []
 
     for term_with_count in sorted(claim_terms_with_occurrences.items()):
         term = term_with_count[0]
@@ -65,7 +65,7 @@ def get_doc_product(vector1: list, vector2: list):
     return sum([vector1[i] * vector2[i] for i in range(len(vector1))])
 
 
-def get_claim_doc_cosine_similarity(claim_terms: list, doc_with_coordination_terms: list) -> tuple:
+def get_claim_doc_cosine_similarity(claim_terms: list, doc_with_coordination_terms: tuple) -> tuple:
     claim_vector = get_tfidf_vector_for_claim(claim_terms)
     claim_norm = get_tfidf_vector_norm(claim_terms, args.debug, args.variant)
 
@@ -89,7 +89,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     doc_candidates = get_candidate_documents_for_claim(claim_terms)
 
     # similarity scores for each claim-doc combination
-    docs_with_similarity_scores = [get_claim_doc_cosine_similarity(claim_terms, doc_with_terms) for doc_with_terms in doc_candidates]
+    docs_with_similarity_scores = [get_claim_doc_cosine_similarity(claim_terms, doc_with_terms) for doc_with_terms in doc_candidates.items()]
 
     # sort by similarity and limit to top results
     docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
