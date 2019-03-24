@@ -14,7 +14,7 @@ def get_index_entry_for_term(term: str) -> dict:
     return shard[term]
 
 
-def get_candidate_documents_for_claim(claim_terms) -> dict:
+def get_candidate_documents_for_claim(claim_terms: list, mode: str = 'tfidf') -> dict:
     doc_candidates = {}
     # In the index, for each term, the occurrences per document are stored
     # For all terms, group by document to compute TF values
@@ -23,6 +23,8 @@ def get_candidate_documents_for_claim(claim_terms) -> dict:
         docs = index_entry['docs']
         for doc in docs:
             page_id = doc[0]
-            tfidf_for_term = doc[1]
-            doc_candidates.setdefault(page_id, {})[term] = tfidf_for_term
+            raw_count = doc[1]
+            tfidf_for_term = doc[2]
+            value = tfidf_for_term if mode == 'tfidf' else raw_count
+            doc_candidates.setdefault(page_id, {})[term] = value
     return doc_candidates

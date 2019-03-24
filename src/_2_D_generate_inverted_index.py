@@ -47,7 +47,7 @@ def generate_partial_subindex_for_batch(batch_id: int) -> dict:
             tf = raw_count if args.variant == 'raw_count' else raw_count / len(filtered_tokens)
             idf = words_with_idf.loc[term]['idf']
             tfidf = tf * idf
-            subindex.setdefault(term, { 'docs': [] })['docs'].append((page_id, tfidf))
+            subindex.setdefault(term, { 'docs': [] })['docs'].append((page_id, raw_count, tfidf))
 
     print('Finished processing batch #{}'.format(batch_id))
     return subindex
