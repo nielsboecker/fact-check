@@ -1,8 +1,6 @@
 import argparse
 import time
 
-from termcolor import colored
-
 from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
 
 parser = argparse.ArgumentParser()
@@ -14,6 +12,6 @@ if __name__ == '__main__':
         start_time = time.time()
         wiki_document = retrieve_wiki_page(args.id)
         print('Retrieved document "{}" after {:.5f} seconds'.format(args.id, time.time() - start_time))
-        print(colored(wiki_document.text, 'blue'))
+        print(wiki_document)
     else:
         print('Please add ID to retrieve')

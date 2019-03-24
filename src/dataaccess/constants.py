@@ -20,12 +20,15 @@ GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
 GENERATED_IDF_PATH = GENERATED_BASE_PATH + 'words_with_idf.jsonl'
 GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY = GENERATED_BASE_PATH + 'wiki_page_batch_mappings/'
 GENERATED_DOCUMENT_NORMS_MAPPING = GENERATED_BASE_PATH + 'docs_to_norms_mapping.jsonl'
+GENERATED_DOCUMENT_LENGTH_MAPPING = GENERATED_BASE_PATH + 'docs_to_lengths_mapping.jsonl'
 GENERATED_INVERTED_INDEX_DIRECTORY = GENERATED_BASE_PATH + 'inverted_index/'
 
 # Retrieved documents
 RETRIEVED_BASE_PATH = './retrieved/'
 RETRIEVED_TFIDF_DIRECTORY = RETRIEVED_BASE_PATH + 'tf-idf/'
 
+# Retrieval parameters
+DOCS_TO_RETRIEVE_PER_CLAIM = 5
 
 def get_wiki_batch_path(batch_id):
     return '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, batch_id)

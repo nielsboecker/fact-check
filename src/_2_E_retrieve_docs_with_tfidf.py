@@ -1,21 +1,18 @@
 import argparse
-import re
 import time
 from collections import Counter
-from multiprocessing import cpu_count, Pool
 from operator import itemgetter
 
-import numpy as np
-import pandas as pd
 from termcolor import colored
 
 from dataaccess.constants import GENERATED_IDF_PATH, DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
-    CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_NORMS_MAPPING
-from dataaccess.json_io import read_jsonl_and_map_to_df, read_dict_from_json, write_list_to_jsonl
-from documentretrieval.access_inverted_index import get_index_entry_for_term
+    CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_NORMS_MAPPING, DOCS_TO_RETRIEVE_PER_CLAIM
+from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from documentretrieval.access_inverted_index import get_candidate_documents_for_claim
+from documentretrieval.claim_processing import preprocess_claim
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
-from util.theads_processes import get_process_pool, get_thread_pool
+from util.theads_processes import get_thread_pool
 from util.vector_semantics import get_tfidf_vector_norm
 
 parser = argparse.ArgumentParser()
@@ -25,8 +22,6 @@ parser.add_argument('--limit', help='only use subset for the first 10 claims', a
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 parser.add_argument('--debug', help='show more print statements', action='store_true')
 args = parser.parse_args()
-
-DOCS_PER_CLAIM = 5
 
 claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
 words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
@@ -65,11 +60,6 @@ def get_tfidf_vector_for_claim(claim_terms: list):
     return claim_vector
 
 
-def preprocess_claim(claim: str) -> str:
-    # Add spaces around punctuation so that claims can be processed like wiki-pages
-    return re.sub(r'([.,!?;])', r' \1 ', claim)
-
-
 def get_doc_product(vector1: list, vector2: list):
     assert len(vector1) == len(vector2)
     return sum([vector1[i] * vector2[i] for i in range(len(vector1))])
@@ -90,7 +80,7 @@ def get_claim_doc_cosine_similarity(claim_terms: list, doc_with_coordination_ter
     return (page_id, cosine_sim)
 
 
-def retrieve_document_for_claim(claim: str, claim_id: int):
+def retrieve_documents_for_claim(claim: str, claim_id: int):
     print(colored('Retrieving documents for claim [{}]: "{}"'.format(claim_id, claim), attrs=['bold']))
     preprocessed_claim = preprocess_claim(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
@@ -103,7 +93,7 @@ def retrieve_document_for_claim(claim: str, claim_id: int):
 
     # sort by similarity and limit to top results
     docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
-    result_docs = docs_with_similarity_scores[:DOCS_PER_CLAIM]
+    result_docs = docs_with_similarity_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
     if (args.print):
         print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
@@ -116,24 +106,10 @@ def retrieve_document_for_claim(claim: str, claim_id: int):
         write_list_to_jsonl(result_path, result_docs)
 
 
-def get_candidate_documents_for_claim(claim_terms) -> dict:
-    doc_candidates = {}
-    # In the index, for each term, the occurrences per document are stored
-    # For all terms, group by document to compute TF values
-    for term in claim_terms:
-        index_entry = get_index_entry_for_term(term)
-        docs = index_entry['docs']
-        for doc in docs:
-            page_id = doc[0]
-            tfidf_for_term = doc[1]
-            doc_candidates.setdefault(page_id, {})[term] = tfidf_for_term
-    return doc_candidates
-
-
 def retrieve_document_for_claim_row(claim_row: tuple):
     claim_id = claim_row[1]['id']
     claim = claim_row[1]['claim']
-    retrieve_document_for_claim(claim, claim_id)
+    retrieve_documents_for_claim(claim, claim_id)
 
 
 def retrieve_documents_for_all_claims():
@@ -152,4 +128,4 @@ if __name__ == '__main__':
         document = retrieve_document_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()
-    print('Finished retrrieval after {:.2f} seconds'.format(time.time() - start_time))
+    print('Finished retrieval after {:.2f} seconds'.format(time.time() - start_time))
