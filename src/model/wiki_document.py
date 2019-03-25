@@ -2,6 +2,8 @@ import json
 
 from termcolor import colored
 
+from util.strings import truncate
+
 DEBUG = False
 
 
@@ -32,7 +34,7 @@ class WikiDocument:
 
     def __str__(self):
         return 'ID:\t\t{}\nTEXT:\t{}\n'.format(colored(self.id, attrs=['bold']),
-                                               colored(self.text, attrs=['underline']))
+                                               colored(truncate(self.text), attrs=['underline']))
 
 
 class WikiLine:
