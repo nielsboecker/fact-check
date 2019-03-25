@@ -27,4 +27,6 @@ def get_candidate_documents_for_claim(claim_terms: list, mode: str = 'tfidf') ->
             tfidf_for_term = doc[2]
             value = tfidf_for_term if mode == 'tfidf' else raw_count
             doc_candidates.setdefault(page_id, {})[term] = value
+
+    print('Found {:,} documents containing one or more claim terms ({}")'.format(len(doc_candidates), claim_terms))
     return doc_candidates

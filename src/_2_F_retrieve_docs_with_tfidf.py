@@ -36,7 +36,7 @@ def get_tfidf_vector_for_document(coordination_terms_for_doc: dict, claim_terms:
     doc_vector = [0 for _ in unique_sorted_claim_terms]
 
     # for terms that are in doc and claim, get IDF values as they are stored in the index
-    for index, term in enumerate(claim_terms):
+    for index, term in enumerate(unique_sorted_claim_terms):
         if term in coordination_terms_for_doc.keys():
             doc_vector[index] = coordination_terms_for_doc[term]
 
