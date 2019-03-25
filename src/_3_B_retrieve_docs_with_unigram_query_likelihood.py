@@ -18,7 +18,7 @@ from util.theads_processes import get_thread_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--smoothing', type=str, default=None,
-                    choices=[None, 'laplace', 'laplace_lindstone' 'jelinek_mercer', 'dirichlet'])
+                    choices=[None, 'laplace', 'laplace_lindstone', 'jelinek_mercer', 'dirichlet'])
 parser.add_argument('--remove_zero_likelihood', help='if documents yield query likelihood 0, don\' show them',
                     action='store_true')
 parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)',
@@ -38,18 +38,18 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     # only docs that appear in index for at least one claim term to be considered
     doc_candidates = get_candidate_documents_for_claim(claim_terms, mode='raw_count')
 
-    retrieval_function = get_query_likelihood_score_no_smoothing
+    scoring_function = get_query_likelihood_score_no_smoothing
     if args.smoothing == 'laplace':
-        retrieval_function = get_query_likelihood_score_laplace_smoothing
+        scoring_function = get_query_likelihood_score_laplace_smoothing
     if args.smoothing == 'laplace_lindstone':
-        retrieval_function = get_query_likelihood_score_laplace_lindstone_smoothing
+        scoring_function = get_query_likelihood_score_laplace_lindstone_smoothing
     if args.smoothing == 'jelinek_mercer':
-        retrieval_function = None
+        scoring_function = None
     if args.smoothing == 'dirichlet':
-        retrieval_function = None
+        scoring_function = None
 
     # query likelihood scores for each claim-doc combination
-    docs_with_query_likelihood_scores = [retrieval_function(claim_terms, doc_with_terms) for
+    docs_with_query_likelihood_scores = [scoring_function(claim_terms, doc_with_terms) for
                                          doc_with_terms in
                                          doc_candidates.items()]
 

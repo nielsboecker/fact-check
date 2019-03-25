@@ -24,7 +24,8 @@ def get_query_likelihood_score_laplace_smoothing(claim_terms: list,
             probability = (occurrences + epsilon) / (doc_length + epsilon * COLLECTION_FILTERED_VOCABULARY_SIZE)
             term_probabilities.append(probability)
         else:
-            term_probabilities.append(0)
+            probability = epsilon / (doc_length + epsilon * COLLECTION_FILTERED_VOCABULARY_SIZE)
+            term_probabilities.append(probability)
 
     query_likelihood = reduce(multiply, term_probabilities, 1)
     return page_id, query_likelihood

@@ -22,7 +22,7 @@ def extract_lines(lines_json_string: str):
 
 class WikiDocument:
     def __init__(self, doc_json_string: str):
-        data = json.loads(doc_json_string, encoding='ascii')
+        data = json.loads(doc_json_string)
         self.id = data['id']
         self.text = data['text']
         self.lines = extract_lines(data['lines'])
