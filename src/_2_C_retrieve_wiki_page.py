@@ -1,7 +1,7 @@
 import argparse
 import time
 
-from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
+from dataaccess.access_wiki_page import retrieve_wiki_page
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--id", help="ID of a document to retrieve for test purposes")

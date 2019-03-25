@@ -6,20 +6,21 @@ from operator import itemgetter
 from termcolor import colored
 
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc
-from dataaccess.access_words_idf_mapping import get_idf_for_term
-from dataaccess.constants import GENERATED_IDF_PATH, DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
-    CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_NORMS_MAPPING, DOCS_TO_RETRIEVE_PER_CLAIM
-from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
+from dataaccess.access_wiki_page import retrieve_wiki_page
+from dataaccess.access_words_idf_mapping import get_idf_for_term
+from dataaccess.constants import DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
+    CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM
+from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from documentretrieval.claim_processing import preprocess_claim
 from documentretrieval.term_processing import process_normalise_tokenise_filter
-from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
 from util.theads_processes import get_thread_pool
 from util.vector_semantics import get_tfidf_vector_norm
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
-parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)', type=int)
+parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)',
+                    type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 parser.add_argument('--debug', help='show more print statements', action='store_true')

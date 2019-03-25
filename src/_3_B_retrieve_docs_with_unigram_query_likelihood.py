@@ -8,19 +8,18 @@ from dataaccess.access_docs_lengths_mapping import get_length_of_doc
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from termcolor import colored
 
+from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_LENGTH_MAPPING, \
     DOCS_TO_RETRIEVE_PER_CLAIM, RETRIEVED_PROBABILISTIC_DIRECTORY
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from documentretrieval.claim_processing import preprocess_claim
 from documentretrieval.term_processing import process_normalise_tokenise_filter
-from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
 from util.theads_processes import get_thread_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)', type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
-#parser.add_argument('--debug', help='show more print statements', action='store_true')
 args = parser.parse_args()
 
 
