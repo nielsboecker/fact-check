@@ -1,14 +1,11 @@
 import time
 from multiprocessing import Pool, cpu_count
 
-import pyhash
 from termcolor import colored
 
 from dataaccess.constants import get_wiki_batch_path, NUM_OF_WIKI_ID_TO_BATCH_SUBMAPS, get_wiki_id_to_batch_submap_id, \
     get_wiki_id_to_batch_submap_path
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_dict_to_json
-
-hasher = pyhash.super_fast_hash()
 
 
 def generate_batch_submaps(batch_id: int):

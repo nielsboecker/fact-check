@@ -6,7 +6,7 @@ from multiprocessing import Pool, cpu_count
 import argparse
 from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
 from documentretrieval.term_processing import process_normalise_tokenise_filter
-from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH
+from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH, TERM_COLOURS
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from termcolor import colored
 
@@ -16,7 +16,6 @@ args = parser.parse_args()
 
 #  This is the amount of wiki-pages after filtering a few in task #1
 COLLECTION_SIZE = 5391645
-TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
 
 def process_generate_df_batch(id: int) -> Counter:

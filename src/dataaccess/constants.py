@@ -1,11 +1,11 @@
 import pyhash
 
+hasher = pyhash.super_fast_hash()
+
 # DATA_COLUMNS_UNLABELED = ['id', 'claim']
 CLAIMS_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
 NUM_OF_WIKI_ID_TO_BATCH_SUBMAPS = 1000
 NUM_OF_INVERTED_INDEX_SHARDS = 10000
-
-hasher = pyhash.super_fast_hash()
 
 # paths to data
 DATA_BASE_PATH = './data/'
@@ -30,6 +30,9 @@ RETRIEVED_PROBABILISTIC_DIRECTORY = RETRIEVED_BASE_PATH + 'probabilistic_nosmoot
 
 # Retrieval parameters
 DOCS_TO_RETRIEVE_PER_CLAIM = 5
+
+# 3rd party libs
+TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
 
 def get_wiki_batch_path(batch_id):

@@ -1,23 +1,20 @@
-import time
-
 import argparse
+import time
+from functools import reduce
 from operator import itemgetter
+from operator import mul as multiply
 
+from dataaccess.access_docs_lengths_mapping import get_length_of_doc
+from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from termcolor import colored
 
 from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_LENGTH_MAPPING, \
     DOCS_TO_RETRIEVE_PER_CLAIM, RETRIEVED_PROBABILISTIC_DIRECTORY
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from documentretrieval.access_inverted_index import get_candidate_documents_for_claim
 from documentretrieval.claim_processing import preprocess_claim
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
 from util.theads_processes import get_thread_pool
-
-
-from functools import reduce
-from operator import mul as multiply
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)', type=int)
@@ -28,13 +25,12 @@ args = parser.parse_args()
 
 
 claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
-doc_length_mapping = read_jsonl_and_map_to_df(GENERATED_DOCUMENT_LENGTH_MAPPING, ['page_id', 'length']).set_index('page_id', drop=False)
 
 
 def get_query_likelihood_score(claim_terms: list, doc_with_coordination_terms: tuple) -> tuple:
     page_id = doc_with_coordination_terms[0]
     coordination_terms_for_doc = doc_with_coordination_terms[1]
-    doc_length = doc_length_mapping.loc[page_id]['length']
+    doc_length = get_length_of_doc(page_id)
 
     # if any of the claim terms is missing from doc, we can short circuit this computation
     if any([term not in coordination_terms_for_doc.keys() for term in claim_terms]):

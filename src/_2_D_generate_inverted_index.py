@@ -5,27 +5,17 @@ from multiprocessing import cpu_count, Pool
 
 from termcolor import colored
 
+from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.constants import get_wiki_batch_path, get_inverted_index_shard_id, \
     get_shard_path, GENERATED_IDF_PATH
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_dict_to_json
 from documentretrieval.document_processing import filter_documents
 from documentretrieval.term_processing import process_normalise_tokenise_filter
-from util.theads_processes import get_thread_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
-# parser.add_argument("--add_idf", help="enrich each term entry with idf value", action="store_true")
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
 args = parser.parse_args()
-
-words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
-
-
-# def init_index_entry_for_term(term: str):
-#     index_entry = {}
-#     index_entry['idf'] = words_with_idf.loc[term]['idf']
-#     index_entry['docs'] = []
-#     return index_entry
 
 
 def generate_partial_subindex_for_batch(batch_id: int) -> dict:
@@ -70,7 +60,7 @@ def enrich_shard_with_idf_values(shard_map_item: tuple) -> tuple:
     for item in shard_data.items():
         term = item[0]
         term_data = item[1] # has only 'docs' at this point
-        term_data['idf'] = words_with_idf.loc[term]['idf']
+        term_data['idf'] = get_idf_for_term(term)
         enriched_data[term] = term_data
 
     return (shard_id, enriched_data)

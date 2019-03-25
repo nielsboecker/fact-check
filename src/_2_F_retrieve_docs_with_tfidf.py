@@ -5,10 +5,12 @@ from operator import itemgetter
 
 from termcolor import colored
 
+from dataaccess.access_docs_norms_mapping import get_norm_for_doc
+from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.constants import GENERATED_IDF_PATH, DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
     CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_NORMS_MAPPING, DOCS_TO_RETRIEVE_PER_CLAIM
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from documentretrieval.access_inverted_index import get_candidate_documents_for_claim
+from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from documentretrieval.claim_processing import preprocess_claim
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from documentretrieval.wiki_page_retrieval import retrieve_wiki_page
@@ -24,8 +26,6 @@ parser.add_argument('--debug', help='show more print statements', action='store_
 args = parser.parse_args()
 
 claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
-words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)
-docs_norms = read_jsonl_and_map_to_df(GENERATED_DOCUMENT_NORMS_MAPPING, ['doc', 'norm']).set_index('doc', drop=False)
 
 
 def get_tfidf_vector_for_document(coordination_terms_for_doc: dict, claim_terms: list):
@@ -51,7 +51,7 @@ def get_tfidf_vector_for_claim(claim_terms: list):
         occurrences = term_with_count[1]
         # For the claim, the occurrences determining the TF come directly from the claim
         tf = occurrences if args.variant == 'raw_count' else occurrences / len(claim_terms)
-        idf = words_with_idf.loc[term]['idf']
+        idf = get_idf_for_term(term)
         tfidf = tf * idf
         claim_vector.append(tfidf)
 
@@ -72,7 +72,7 @@ def get_claim_doc_cosine_similarity(claim_terms: list, doc_with_coordination_ter
     page_id = doc_with_coordination_terms[0]
     coordination_terms_for_doc = doc_with_coordination_terms[1]
     doc_vector = get_tfidf_vector_for_document(coordination_terms_for_doc, claim_terms)
-    doc_norm = docs_norms.loc[page_id]['norm']
+    doc_norm = get_norm_for_doc(page_id)
 
     dot_product = get_doc_product(claim_vector, doc_vector)
     cosine_sim = dot_product / (claim_norm * doc_norm)
