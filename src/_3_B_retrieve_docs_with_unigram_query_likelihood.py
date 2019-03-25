@@ -1,51 +1,30 @@
 import argparse
 import time
-from functools import reduce
 from operator import itemgetter
-from operator import mul as multiply
 
-from dataaccess.access_docs_lengths_mapping import get_length_of_doc
-from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from termcolor import colored
 
+from _3_C_probabilistic_no_smoothing import get_query_likelihood_score_no_smoothing
+from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, GENERATED_DOCUMENT_LENGTH_MAPPING, \
-    DOCS_TO_RETRIEVE_PER_CLAIM, RETRIEVED_PROBABILISTIC_DIRECTORY
+from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM, \
+    RETRIEVED_PROBABILISTIC_DIRECTORY
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from documentretrieval.claim_processing import preprocess_claim
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_thread_pool
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)', type=int)
+parser.add_argument('--smoothing', type=str, choices=[None, 'laplace', 'jelinek_mercer', 'dirichlet'], default=None)
+parser.add_argument('--remove_zero_likelihood', help='if documents yield query likelihood 0, don\' show them',
+                    action='store_true')
+parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)',
+                    type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 args = parser.parse_args()
 
-
 claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
-
-
-def get_query_likelihood_score(claim_terms: list, doc_with_coordination_terms: tuple) -> tuple:
-    page_id = doc_with_coordination_terms[0]
-    coordination_terms_for_doc = doc_with_coordination_terms[1]
-    doc_length = get_length_of_doc(page_id)
-
-    # if any of the claim terms is missing from doc, we can short circuit this computation
-    if any([term not in coordination_terms_for_doc.keys() for term in claim_terms]):
-        return page_id, 0
-
-    term_probabilites = []
-    for term in claim_terms:
-        if term in coordination_terms_for_doc.keys():
-            occurrences = coordination_terms_for_doc[term]
-            probability = float(occurrences) / float(doc_length)
-            term_probabilites.append(probability)
-        else:
-            term_probabilites.append(0)
-
-    query_likelihood = reduce(multiply, term_probabilites, 1)
-    return page_id, query_likelihood
 
 
 def retrieve_documents_for_claim(claim: str, claim_id: int):
@@ -56,16 +35,31 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     # only docs that appear in index for at least one claim term to be considered
     doc_candidates = get_candidate_documents_for_claim(claim_terms, mode='raw_count')
 
-    # query likelihood scores for each claim-doc combination
-    docs_with_query_likelihood_scores = [get_query_likelihood_score(claim_terms, doc_with_terms) for doc_with_terms in doc_candidates.items()]
+    retrieval_function = get_query_likelihood_score_no_smoothing
+    if args.smoothing == 'laplace':
+        retrieval_function = None
+    if args.smoothing == 'jelinek_mercer':
+        retrieval_function = None
+    if args.smoothing == 'dirichlet':
+        retrieval_function = None
 
-    # zero values lead to random retrievals if all documents evaluate to zero, so rather show no results at all
-    docs_with_query_likelihood_scores = list(filter(lambda x: x[1] != 0, docs_with_query_likelihood_scores))
+    # query likelihood scores for each claim-doc combination
+    docs_with_query_likelihood_scores = [retrieval_function(claim_terms, doc_with_terms) for
+                                         doc_with_terms in
+                                         doc_candidates.items()]
+
+    # zero values lead to random retrievals if all documents evaluate to zero, so might rather want to show no results
+    if (args.remove_zero_likelihood):
+        docs_with_query_likelihood_scores = list(filter(lambda x: x[1] != 0, docs_with_query_likelihood_scores))
 
     # sort by query likelihood and limit to top results
     docs_with_query_likelihood_scores.sort(key=itemgetter(1), reverse=True)
     result_docs = docs_with_query_likelihood_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
+    show_or_store_results(claim, claim_id, result_docs)
+
+
+def show_or_store_results(claim, claim_id, result_docs):
     if (args.print):
         print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
         if not result_docs:
