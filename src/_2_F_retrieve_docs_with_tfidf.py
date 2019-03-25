@@ -66,10 +66,10 @@ def get_doc_product(vector1: list, vector2: list):
     return sum([vector1[i] * vector2[i] for i in range(len(vector1))])
 
 
-def get_claim_doc_cosine_similarity(claim_terms: list, doc_with_coordination_terms: tuple) -> tuple:
-    claim_vector = get_tfidf_vector_for_claim(claim_terms)
-    claim_norm = get_tfidf_vector_norm(claim_terms, args.debug, args.variant)
-
+def get_claim_doc_cosine_similarity(claim_terms: list,
+                                    claim_vector: list,
+                                    claim_norm: float,
+                                    doc_with_coordination_terms: tuple) -> tuple:
     page_id = doc_with_coordination_terms[0]
     coordination_terms_for_doc = doc_with_coordination_terms[1]
     doc_vector = get_tfidf_vector_for_document(coordination_terms_for_doc, claim_terms)
@@ -78,19 +78,23 @@ def get_claim_doc_cosine_similarity(claim_terms: list, doc_with_coordination_ter
     dot_product = get_doc_product(claim_vector, doc_vector)
     cosine_sim = dot_product / (claim_norm * doc_norm)
 
-    return (page_id, cosine_sim)
+    return page_id, cosine_sim
 
 
 def retrieve_documents_for_claim(claim: str, claim_id: int):
     print(colored('Retrieving documents for claim [{}]: "{}"'.format(claim_id, claim), attrs=['bold']))
     preprocessed_claim = preprocess_claim(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
+    claim_vector = get_tfidf_vector_for_claim(claim_terms)
+    claim_norm = get_tfidf_vector_norm(claim_terms, args.debug, args.variant)
 
     # only docs that appear in index for at least one claim term to be considered
     doc_candidates = get_candidate_documents_for_claim(claim_terms)
 
     # similarity scores for each claim-doc combination
-    docs_with_similarity_scores = [get_claim_doc_cosine_similarity(claim_terms, doc_with_terms) for doc_with_terms in doc_candidates.items()]
+    docs_with_similarity_scores = [
+        get_claim_doc_cosine_similarity(claim_terms, claim_vector, claim_norm, doc_with_terms) for doc_with_terms in
+        doc_candidates.items()]
 
     # sort by similarity and limit to top results
     docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
