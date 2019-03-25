@@ -7,7 +7,7 @@ import argparse
 from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH, TERM_COLOURS, \
-    COLLECTION_FILTERED_DOCUMENTS_NUMBER
+    COLLECTION_DOCUMENTS_NUMBER
 from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from termcolor import colored
 
@@ -73,7 +73,7 @@ def get_words_with_idf(words_with_df: list) -> list:
     for word_count in words_with_df:
         word = word_count[0]
         df = word_count[1]
-        idf = math.log10(COLLECTION_FILTERED_DOCUMENTS_NUMBER / df)
+        idf = math.log10(COLLECTION_DOCUMENTS_NUMBER / df)
         result.append((word, idf))
     return result
 

@@ -2,7 +2,7 @@ from functools import reduce
 from operator import mul as multiply
 
 from dataaccess.access_docs_lengths_mapping import get_length_of_doc
-from dataaccess.constants import COLLECTION_FILTERED_VOCABULARY_SIZE
+from dataaccess.constants import COLLECTION_VOCABULARY_SIZE
 
 
 LINDSTONE_CORRECTION_FACTOR = 0.01
@@ -21,10 +21,10 @@ def get_query_likelihood_score_laplace_smoothing(claim_terms: list,
     for term in claim_terms:
         if term in coordination_terms_for_doc.keys():
             occurrences = coordination_terms_for_doc[term]
-            probability = (occurrences + epsilon) / (doc_length + epsilon * COLLECTION_FILTERED_VOCABULARY_SIZE)
+            probability = (occurrences + epsilon) / (doc_length + epsilon * COLLECTION_VOCABULARY_SIZE)
             term_probabilities.append(probability)
         else:
-            probability = epsilon / (doc_length + epsilon * COLLECTION_FILTERED_VOCABULARY_SIZE)
+            probability = epsilon / (doc_length + epsilon * COLLECTION_VOCABULARY_SIZE)
             term_probabilities.append(probability)
 
     query_likelihood = reduce(multiply, term_probabilities, 1)
