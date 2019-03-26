@@ -13,7 +13,7 @@ def preprocess_claim(claim: str) -> str:
 
 def display_or_store_result(claim: str, claim_id: int, result_docs: list, dir_path: str, display_only: bool = False):
     if display_only:
-        print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
+        print(colored('Results for claim "{}":'.format(claim), 'yellow'))
         for doc in result_docs:
             page_id = doc[0]
             wiki_page = retrieve_wiki_page(page_id)
@@ -21,4 +21,5 @@ def display_or_store_result(claim: str, claim_id: int, result_docs: list, dir_pa
     else:
         #result_path = '{}{}.jsonl'.format(path, claim_id)
         #write_list_to_jsonl(result_path, result_docs)
+        print(colored('Storing results for claim "{}\n{}":'.format(claim, result_docs), 'yellow'))
         write_list_to_oneline_csv(dir_path, claim_id, result_docs)
