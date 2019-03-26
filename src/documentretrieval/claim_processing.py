@@ -2,9 +2,8 @@ import re
 
 from termcolor import colored
 
-from _2_F_retrieve_docs_with_tfidf import args
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.json_io import write_list_to_jsonl
+from dataaccess.json_io import write_list_to_jsonl, write_list_to_oneline_csv
 
 
 def preprocess_claim(claim: str) -> str:
@@ -12,13 +11,14 @@ def preprocess_claim(claim: str) -> str:
     return re.sub(r'([.,!?;])', r' \1 ', claim)
 
 
-def display_or_store_result(claim: str, claim_id: int, result_docs: list, path: str):
-    if (args.print):
+def display_or_store_result(claim: str, claim_id: int, result_docs: list, dir_path: str, display_only: bool = False):
+    if display_only:
         print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
         for doc in result_docs:
             page_id = doc[0]
             wiki_page = retrieve_wiki_page(page_id)
             print(wiki_page)
     else:
-        result_path = '{}{}.jsonl'.format(path, claim_id)
-        write_list_to_jsonl(result_path, result_docs)
+        #result_path = '{}{}.jsonl'.format(path, claim_id)
+        #write_list_to_jsonl(result_path, result_docs)
+        write_list_to_oneline_csv(dir_path, claim_id, result_docs)

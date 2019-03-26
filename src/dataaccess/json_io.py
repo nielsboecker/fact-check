@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 
@@ -44,3 +45,10 @@ def write_list_to_jsonl(output_path: str, data: list):
     with jsonlines.open(output_path, mode='w') as writer:
         writer.write_all(data)
     print(colored('Wrote {} lines to "{}"'.format(len(data), output_path), attrs=['bold']))
+
+
+def write_list_to_oneline_csv(dir_path: str, claim_id: int, list_of_tuples: list):
+    create_dir_if_not_exists(dir_path)
+    with open('{}{}.csv'.format(dir_path, claim_id), 'w', newline='') as fp:
+        writer = csv.writer(fp, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow([claim_id] + [tup[0] for tup in list_of_tuples])
