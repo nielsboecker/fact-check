@@ -7,12 +7,11 @@ from termcolor import colored
 
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
-from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.constants import DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
     CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM
-from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from documentretrieval.claim_processing import preprocess_claim
+from dataaccess.json_io import read_jsonl_and_map_to_df
+from documentretrieval.claim_processing import preprocess_claim, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_thread_pool
 from util.vector_semantics import get_tfidf_vector_norm
@@ -100,15 +99,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
     result_docs = docs_with_similarity_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
-    if (args.print):
-        print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
-        for doc in result_docs:
-            page_id = doc[0]
-            wiki_page = retrieve_wiki_page(page_id)
-            print(wiki_page)
-    else:
-        result_path = '{}{}.jsonl'.format(RETRIEVED_TFIDF_DIRECTORY, claim_id)
-        write_list_to_jsonl(result_path, result_docs)
+    display_or_store_result(claim, claim_id, result_docs, RETRIEVED_TFIDF_DIRECTORY)
 
 
 def retrieve_document_for_claim_row(claim_row: tuple):

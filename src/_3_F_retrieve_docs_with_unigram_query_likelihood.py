@@ -4,15 +4,15 @@ from operator import itemgetter
 
 from termcolor import colored
 
-from _3_C_probabilistic_no_smoothing import get_query_likelihood_score_no_smoothing
-from _3_D_probabilistic_laplace_smoothing import get_query_likelihood_score_laplace_lindstone_smoothing, \
+from _3_B_probabilistic_no_smoothing import get_query_likelihood_score_no_smoothing
+from _3_C_laplace_smoothing import get_query_likelihood_score_laplace_lindstone_smoothing, \
     get_query_likelihood_score_laplace_smoothing
+from _3_D_jelinek_mercer_smoothing import get_query_likelihood_score_jelinek_mercer_smoothing
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
-from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM, \
     RETRIEVED_PROBABILISTIC_DIRECTORY
-from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from documentretrieval.claim_processing import preprocess_claim
+from dataaccess.json_io import read_jsonl_and_map_to_df
+from documentretrieval.claim_processing import preprocess_claim, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_thread_pool
 
@@ -44,7 +44,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     if args.smoothing == 'laplace_lindstone':
         scoring_function = get_query_likelihood_score_laplace_lindstone_smoothing
     if args.smoothing == 'jelinek_mercer':
-        scoring_function = None
+        scoring_function = get_query_likelihood_score_jelinek_mercer_smoothing
     if args.smoothing == 'dirichlet':
         scoring_function = None
 
@@ -61,21 +61,8 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     docs_with_query_likelihood_scores.sort(key=itemgetter(1), reverse=True)
     result_docs = docs_with_query_likelihood_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
-    show_or_store_results(claim, claim_id, result_docs)
-
-
-def show_or_store_results(claim, claim_id, result_docs):
-    if (args.print):
-        print(colored('Results for claim "{}":'.format(claim), attrs=['bold']))
-        if not result_docs:
-            print('-- No documents found --')
-        for doc in result_docs:
-            page_id = doc[0]
-            wiki_page = retrieve_wiki_page(page_id)
-            print(wiki_page)
-    else:
-        result_path = '{}{}.jsonl'.format(RETRIEVED_PROBABILISTIC_DIRECTORY, claim_id)
-        write_list_to_jsonl(result_path, result_docs)
+    result_directory = '{}{}/'.format(RETRIEVED_PROBABILISTIC_DIRECTORY, args.smoothing or 'no_smoothing')
+    display_or_store_result(claim, claim_id, result_docs, result_directory)
 
 
 def retrieve_documents_for_claim_row(claim_row: tuple):
