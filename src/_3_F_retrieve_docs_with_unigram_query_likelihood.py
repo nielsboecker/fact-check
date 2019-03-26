@@ -8,6 +8,7 @@ from _3_B_probabilistic_no_smoothing import get_query_likelihood_score_no_smooth
 from _3_C_laplace_smoothing import get_query_likelihood_score_laplace_lindstone_smoothing, \
     get_query_likelihood_score_laplace_smoothing
 from _3_D_jelinek_mercer_smoothing import get_query_likelihood_score_jelinek_mercer_smoothing
+from _3_E_dirichlet_smoothing import get_query_likelihood_score_dirichlet_smoothing
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM, \
     RETRIEVED_PROBABILISTIC_DIRECTORY
@@ -46,7 +47,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     if args.smoothing == 'jelinek_mercer':
         scoring_function = get_query_likelihood_score_jelinek_mercer_smoothing
     if args.smoothing == 'dirichlet':
-        scoring_function = None
+        scoring_function = get_query_likelihood_score_dirichlet_smoothing
 
     # query likelihood scores for each claim-doc combination
     docs_with_query_likelihood_scores = [scoring_function(claim_terms, doc_with_terms) for
@@ -62,7 +63,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     result_docs = docs_with_query_likelihood_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
     result_directory = '{}{}/'.format(RETRIEVED_PROBABILISTIC_DIRECTORY, args.smoothing or 'no_smoothing')
-    display_or_store_result(claim, claim_id, result_docs, result_directory)
+    display_or_store_result(claim, claim_id, result_docs, result_directory, args.print)
 
 
 def retrieve_documents_for_claim_row(claim_row: tuple):

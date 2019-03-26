@@ -99,7 +99,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     docs_with_similarity_scores.sort(key=itemgetter(1), reverse=True)
     result_docs = docs_with_similarity_scores[:DOCS_TO_RETRIEVE_PER_CLAIM]
 
-    display_or_store_result(claim, claim_id, result_docs, RETRIEVED_TFIDF_DIRECTORY)
+    display_or_store_result(claim, claim_id, result_docs, RETRIEVED_TFIDF_DIRECTORY, args.print)
 
 
 def retrieve_document_for_claim_row(claim_row: tuple):
@@ -119,7 +119,7 @@ def retrieve_documents_for_all_claims():
 
 if __name__ == '__main__':
     start_time = time.time()
-    if (args.id):
+    if args.id:
         claim = claims.loc[args.id]
         document = retrieve_document_for_claim_row((None, claim))
     else:
