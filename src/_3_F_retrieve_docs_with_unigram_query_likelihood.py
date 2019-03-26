@@ -15,7 +15,7 @@ from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, DOC
 from dataaccess.json_io import read_jsonl_and_map_to_df
 from documentretrieval.claim_processing import preprocess_claim, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter
-from util.theads_processes import get_thread_pool
+from util.theads_processes import get_process_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--smoothing', type=str, default=None,
@@ -73,12 +73,11 @@ def retrieve_documents_for_claim_row(claim_row: tuple):
 
 
 def retrieve_documents_for_all_claims():
-    # TODO: thread vs process
-    thread_pool = get_thread_pool()
+    pool = get_process_pool()
     if (args.limit):
-        thread_pool.map(retrieve_documents_for_claim_row, claims.head(n=15).iterrows())
+        pool.map(retrieve_documents_for_claim_row, claims.head(n=15).iterrows())
     else:
-        thread_pool.map(retrieve_documents_for_claim_row, claims.iterrows())
+        pool.map(retrieve_documents_for_claim_row, claims.iterrows())
 
 
 if __name__ == '__main__':
