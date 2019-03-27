@@ -31,7 +31,7 @@ claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).se
 def get_tfidf_vector_for_document(coordination_terms_for_doc: dict, claim_terms: list):
     # the vectors only need to have a dimension for each term that occurs in
     # the query, as other terms would be 0 in the dot product anyways
-    unique_sorted_claim_terms = set(claim_terms)
+    unique_sorted_claim_terms = sorted(list(set(claim_terms)))
     doc_vector = [0 for _ in unique_sorted_claim_terms]
 
     # for terms that are in doc and claim, get IDF values as they are stored in the index
