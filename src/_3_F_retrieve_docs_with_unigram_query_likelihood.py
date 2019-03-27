@@ -10,9 +10,9 @@ from _3_C_laplace_smoothing import get_query_likelihood_score_laplace_lindstone_
 from _3_D_jelinek_mercer_smoothing import get_query_likelihood_score_jelinek_mercer_smoothing
 from _3_E_dirichlet_smoothing import get_query_likelihood_score_dirichlet_smoothing
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
-from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM, \
+from dataaccess.access_training_data import get_all_training_claims, get_training_claim_row
+from dataaccess.constants import DOCS_TO_RETRIEVE_PER_CLAIM, \
     RETRIEVED_PROBABILISTIC_DIRECTORY
-from dataaccess.json_io import read_jsonl_and_map_to_df
 from documentretrieval.claim_processing import preprocess_claim, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
@@ -27,8 +27,6 @@ parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (i
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 args = parser.parse_args()
-
-claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
 
 
 def retrieve_documents_for_claim(claim: str, claim_id: int):
@@ -75,15 +73,15 @@ def retrieve_documents_for_claim_row(claim_row: tuple):
 def retrieve_documents_for_all_claims():
     pool = get_process_pool()
     if (args.limit):
-        pool.map(retrieve_documents_for_claim_row, claims.head(n=15).iterrows())
+        pool.map(retrieve_documents_for_claim_row, get_all_training_claims().head(n=15).iterrows())
     else:
-        pool.map(retrieve_documents_for_claim_row, claims.iterrows())
+        pool.map(retrieve_documents_for_claim_row, get_all_training_claims().iterrows())
 
 
 if __name__ == '__main__':
     start_time = time.time()
     if (args.id):
-        claim = claims.loc[args.id]
+        claim = get_training_claim_row(args.id)
         document = retrieve_documents_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()
