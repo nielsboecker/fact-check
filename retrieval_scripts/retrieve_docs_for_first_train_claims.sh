@@ -15,4 +15,6 @@ echo ">>>>> laplace_lindstone retrieval finished"
 python3 src/_3_F_retrieve_docs_with_unigram_query_likelihood.py --limit --smoothing "jelinek_mercer"
 echo ">>>>> jelinek_mercer retrieval finished"
 
-# python3 src/_3_F_retrieve_docs_with_unigram_query_likelihood.py --limit --smoothing "dirichlet"
+python3 src/_3_F_retrieve_docs_with_unigram_query_likelihood.py --limit --smoothing "dirichlet"
+echo ">>>>> dirichlet retrieval finished"
+
