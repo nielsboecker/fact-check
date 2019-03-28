@@ -1,7 +1,5 @@
 # input files
-data/*.jsonl
-data/wiki-pages.zip
-data/wiki-pages/
+data/*
 
 # output files
 generated/*
