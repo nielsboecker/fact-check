@@ -20,8 +20,10 @@ DATA_WIKI_PATH = DATA_BASE_PATH + 'wiki-pages/'
 DATA_TRAINING_PATH = DATA_BASE_PATH + 'train.jsonl'
 DATA_DEV_UNLABELED_PATH = DATA_BASE_PATH + 'shared_task_dev_public.jsonl'  # TODO: Wrong dataset
 DATA_DEV_LABELED_PATH = DATA_BASE_PATH + 'shared_task_dev.jsonl'
+#DATA_PRETRAINED_EMBEDDINGS_PATH = DATA_BASE_PATH + 'GoogleNews-vectors-negative300.bin'
+DATA_PRETRAINED_EMBEDDINGS_PATH = DATA_BASE_PATH + 'glove.840B.300d.txt'
 
-# paths to generated interim data and output
+# paths to generated auxiliary data and output
 GENERATED_BASE_PATH = './generated/'
 GENERATED_COUNTS_PATH = GENERATED_BASE_PATH + 'accumulated_word_count.jsonl'
 GENERATED_IDF_PATH = GENERATED_BASE_PATH + 'words_with_idf.jsonl'
