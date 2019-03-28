@@ -5,7 +5,7 @@ from termcolor import colored
 from util.strings import truncate
 
 
-def extract_lines(lines_json_string: str):
+def extract_lines(lines_json_string: str) -> list:
     raw_lines = lines_json_string.split('\n')
     parsed_lines = []
 
@@ -13,7 +13,7 @@ def extract_lines(lines_json_string: str):
         line_parts = raw_line.split('\t')
         line_index = int(line_parts[0])
         line_text = line_parts[1]
-        # Use set to implicitly discard duplicate anchor tokens
+        # use set to implicitly discard duplicate anchor tokens
         line_anchors = set(line_parts[2:])
         parsed_lines.append(WikiLine(line_index, line_text, line_anchors))
 

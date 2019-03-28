@@ -25,7 +25,7 @@ def count_documents_all() -> int:
 
 
 def count_words_all() -> int:
-    return get_terms_with_occurrences_mapping()['frequency'].sum()
+    return get_terms_with_occurrences_mapping()['occurrences'].sum()
 
 
 if __name__ == '__main__':
