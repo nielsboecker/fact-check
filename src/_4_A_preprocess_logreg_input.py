@@ -10,6 +10,7 @@ from dataaccess.access_training_data import get_training_claim, get_training_cla
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.constants import PREPROCESSED_TRAINING_DATA
 from dataaccess.files_io import write_pickle
+from documentretrieval.claim_processing import preprocess_text
 from model.wiki_document import WikiDocument
 from util.vector_algebra import get_min_max_vectors
 
@@ -77,7 +78,7 @@ if __name__ == '__main__':
         if not is_verifiable(claim_id):
             continue
 
-        claim = get_training_claim(claim_id)
+        claim = preprocess_text(get_training_claim(claim_id))
         evidence_map = get_evidence_page_line_map(claim_id)
 
         retrieved_doc_ids = set(claim_with_docs[1])

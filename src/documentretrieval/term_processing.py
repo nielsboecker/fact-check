@@ -8,7 +8,7 @@ stop_words = set(stopwords.words('english'))
 
 
 def preprocess_article(article: str) -> str:
-    return article.replace('-LRB-', '').replace('-RRB-', '')  # TODO: should also contain '-COLON-'
+    return article.replace('-LRB-', '').replace('-RRB-', '')  # TODO: should also contain -COLON-, -LSB-, -RSB-
 
 
 def tokenise_article(article: str) -> list:
