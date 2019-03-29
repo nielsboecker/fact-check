@@ -11,11 +11,11 @@ def extract_lines(lines_json_string: str) -> list:
 
     for raw_line in raw_lines:
         line_parts = raw_line.split('\t')
-        line_index = int(line_parts[0])
+        line_id = int(line_parts[0])
         line_text = line_parts[1]
         # use set to implicitly discard duplicate anchor tokens
         line_anchors = set(line_parts[2:])
-        parsed_lines.append(WikiLine(line_index, line_text, line_anchors))
+        parsed_lines.append(WikiLine(line_id, line_text, line_anchors))
 
     return parsed_lines
 
@@ -33,7 +33,7 @@ class WikiDocument:
 
 
 class WikiLine:
-    def __init__(self, index, text, anchors):
-        self.index = index
+    def __init__(self, id: int, text: str, anchors: list):
+        self.id = id
         self.text = text
         self.anchors = anchors

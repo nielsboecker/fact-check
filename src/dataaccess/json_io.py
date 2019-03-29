@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import pickle
 
 import jsonlines
 import pandas as pd
@@ -52,3 +53,14 @@ def write_list_to_oneline_csv(dir_path: str, claim_id: int, list_of_tuples: list
     with open('{}{}.csv'.format(dir_path, claim_id), 'w', newline='') as fp:
         writer = csv.writer(fp, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow([claim_id] + [tup[0] for tup in list_of_tuples])
+
+
+def write_pickle(output_path: str, payload: object):
+    pickle.dump(payload, open(output_path, "wb"))
+    print('Stored pickle to "{}"'.format(output_path))
+
+
+def read_pickle(input_path: str) -> object:
+    loaded_pickle = pickle.load(open(input_path, "rb"))
+    print('Loaded pickle from {}'.format(input_path))
+    return loaded_pickle

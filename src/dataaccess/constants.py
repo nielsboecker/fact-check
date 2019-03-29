@@ -31,6 +31,7 @@ GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY = GENERATED_BASE_PATH + 'wiki_page_batch_ma
 GENERATED_DOCUMENT_NORMS_MAPPING = GENERATED_BASE_PATH + 'docs_to_norms_mapping.jsonl'
 GENERATED_DOCUMENT_LENGTH_MAPPING = GENERATED_BASE_PATH + 'docs_to_lengths_mapping.jsonl'
 GENERATED_INVERTED_INDEX_DIRECTORY = GENERATED_BASE_PATH + 'inverted_index/'
+PREPROCESSED_TRAINING_DATA = GENERATED_BASE_PATH + 'sentence_relevance/preprocessed_training_data.p'
 
 # Retrieved documents
 RETRIEVED_BASE_PATH = './retrieved/'

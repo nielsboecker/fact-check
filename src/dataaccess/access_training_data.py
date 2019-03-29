@@ -16,3 +16,7 @@ def get_training_claim_row(id: int) -> pd.Series:
 
 def get_all_training_claims() -> pd.DataFrame:
     return claims
+
+
+def is_verifiable(claim_id: int) -> bool:
+    return claims.loc[claim_id]['verifiable'] == 'VERIFIABLE'
