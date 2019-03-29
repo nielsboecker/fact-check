@@ -27,12 +27,12 @@ wget https://s3-eu-west-1.amazonaws.com/fever.public/train.jsonl
 # rm -f ${VECTORS_FILE}
 
 # GloVe pre-trained word vectors
-GLOVE_FILE_NAME = "glove.840B.300d"
+GLOVE_FILE_NAME="glove.840B.300d"
 wget http://nlp.stanford.edu/data/${GLOVE_FILE_NAME}.zip
 unzip ${GLOVE_FILE_NAME}.zip
 rm -rf ${GLOVE_FILE_NAME}.zip
 # Transform GloVe to Word2Vec format, refer to https://radimrehurek.com/gensim/scripts/glove2word2vec.html
-sed -i '1i2196017 300' {GLOVE_FILE_NAME}.txt
+sed -i '1i2196017 300' ${GLOVE_FILE_NAME}.txt
 
 
 echo "Downloaded all input data"
