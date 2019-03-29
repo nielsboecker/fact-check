@@ -5,7 +5,7 @@ from multiprocessing import cpu_count, Pool
 from termcolor import colored
 
 from dataaccess.constants import GENERATED_COUNTS_PATH, get_wiki_batch_path
-from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from dataaccess.files_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 

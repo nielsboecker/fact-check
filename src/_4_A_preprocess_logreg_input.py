@@ -9,7 +9,7 @@ from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_training_data import get_training_claim, get_training_claim_row, is_verifiable
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.constants import PREPROCESSED_TRAINING_DATA
-from dataaccess.json_io import write_pickle
+from dataaccess.files_io import write_pickle
 from model.wiki_document import WikiDocument
 from util.vector_algebra import get_min_max_vectors
 

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED
-from dataaccess.json_io import read_jsonl_and_map_to_df
+from dataaccess.files_io import read_jsonl_and_map_to_df
 
 claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
 

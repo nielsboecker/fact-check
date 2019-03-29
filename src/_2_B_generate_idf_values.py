@@ -1,15 +1,16 @@
+import argparse
 import math
 import time
 from collections import Counter
 from multiprocessing import Pool, cpu_count
 
-import argparse
-from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
-from documentretrieval.term_processing import process_normalise_tokenise_filter
+from termcolor import colored
+
 from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH, TERM_COLOURS, \
     COLLECTION_DOCUMENTS_NUMBER
-from dataaccess.json_io import read_jsonl_and_map_to_df, write_list_to_jsonl
-from termcolor import colored
+from dataaccess.files_io import read_jsonl_and_map_to_df, write_list_to_jsonl
+from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
+from documentretrieval.term_processing import process_normalise_tokenise_filter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")

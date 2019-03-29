@@ -3,7 +3,7 @@ import re
 from termcolor import colored
 
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.json_io import write_list_to_jsonl, write_list_to_oneline_csv
+from dataaccess.files_io import write_list_to_oneline_csv
 
 
 def preprocess_claim(claim: str) -> str:

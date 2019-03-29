@@ -10,7 +10,7 @@ from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.constants import DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
     CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM
-from dataaccess.json_io import read_jsonl_and_map_to_df
+from dataaccess.files_io import read_jsonl_and_map_to_df
 from documentretrieval.claim_processing import preprocess_claim, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool

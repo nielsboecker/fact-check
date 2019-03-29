@@ -2,7 +2,7 @@ import argparse
 import time
 
 from dataaccess.constants import GENERATED_DOCUMENT_LENGTH_MAPPING, get_wiki_batch_path
-from dataaccess.json_io import read_jsonl_and_map_to_df, write_dict_to_jsonl
+from dataaccess.files_io import read_jsonl_and_map_to_df, write_dict_to_jsonl
 from documentretrieval.document_processing import filter_documents
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
