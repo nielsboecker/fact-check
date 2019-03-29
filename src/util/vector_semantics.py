@@ -15,6 +15,6 @@ def get_tfidf_vector_norm(text: list, debug=False, variant='relative'):
         accumulated_tfidf_values_for_words.append(tfidf_value)
     norm = math.sqrt(sum([i ** 2 for i in accumulated_tfidf_values_for_words]))
 
-    if (debug):
-        print('Computed norm {} for doc \n{}'.format(norm, text))
+    # if (debug):
+    #     print('Computed norm {} for doc \n{}'.format(norm, text))
     return norm

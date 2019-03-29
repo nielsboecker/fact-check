@@ -6,8 +6,8 @@ from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_io import write_list_to_oneline_csv
 
 
-def preprocess_claim(claim: str) -> str:
-    # Add spaces around punctuation so that claims can be processed like wiki-pages
+def preprocess_text(claim: str) -> str:
+    # Add spaces around punctuation so that claims can be further processed like the text in wiki-pages
     return re.sub(r'([.,!?;])', r' \1 ', claim)
 
 

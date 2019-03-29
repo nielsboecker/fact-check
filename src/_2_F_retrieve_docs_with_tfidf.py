@@ -5,21 +5,22 @@ from operator import itemgetter
 
 from termcolor import colored
 
-from dataaccess.access_docs_norms_mapping import get_norm_for_doc
+from dataaccess.access_docs_norms_mapping import get_norm_for_doc_text
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.constants import DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
     CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM
 from dataaccess.files_io import read_jsonl_and_map_to_df
-from documentretrieval.claim_processing import preprocess_claim, display_or_store_result
+from documentretrieval.claim_processing import preprocess_text, display_or_store_result
+from documentretrieval.document_processing import preprocess_doc_title
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
 from util.vector_semantics import get_tfidf_vector_norm
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
-parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)',
-                    type=int)
+parser.add_argument('--doc_title', help='[0...1] weight of doc title vs. doc text', type=float, default=0.5)
+parser.add_argument('--id', help='process only this ID of a claim to retrieve for test purposes', type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 parser.add_argument('--debug', help='show more print statements', action='store_true')
@@ -55,7 +56,7 @@ def get_tfidf_vector_for_claim(claim_terms: list):
         tfidf = tf * idf
         claim_vector.append(tfidf)
 
-    if (args.debug):
+    if args.debug:
         print('Computed vector {} for claim "{}"'.format(claim_vector, claim_terms))
     return claim_vector
 
@@ -65,24 +66,59 @@ def get_doc_product(vector1: list, vector2: list):
     return sum([vector1[i] * vector2[i] for i in range(len(vector1))])
 
 
-def get_claim_doc_cosine_similarity(claim_terms: list,
-                                    claim_vector: list,
-                                    claim_norm: float,
-                                    doc_with_coordination_terms: tuple) -> tuple:
+def get_claim_doc_text_cosine_similarity(claim_terms: list,
+                                         claim_vector: list,
+                                         claim_norm: float,
+                                         doc_with_coordination_terms: tuple) -> float:
     page_id = doc_with_coordination_terms[0]
     coordination_terms_for_doc = doc_with_coordination_terms[1]
-    doc_vector = get_tfidf_vector_for_document(coordination_terms_for_doc, claim_terms)
-    doc_norm = get_norm_for_doc(page_id)
+    doc_text_vector = get_tfidf_vector_for_document(coordination_terms_for_doc, claim_terms)
+    # use pre-computed norm
+    doc_text_norm = get_norm_for_doc_text(page_id)
 
-    dot_product = get_doc_product(claim_vector, doc_vector)
-    cosine_sim = dot_product / (claim_norm * doc_norm)
+    dot_product = get_doc_product(claim_vector, doc_text_vector)
+    cosine_sim = dot_product / (claim_norm * doc_text_norm)
 
-    return page_id, cosine_sim
+    return cosine_sim
+
+
+def get_claim_doc_title_cosine_similarity(claim_terms: list,
+                                          claim_vector: list,
+                                          claim_norm: float,
+                                          doc_with_coordination_terms: tuple) -> float:
+    doc_title_terms = preprocess_doc_title(doc_with_coordination_terms[0])
+    # Use only terms from title, discard doc text
+    term_counts = dict(Counter(doc_title_terms))
+    doc_title_vector = get_tfidf_vector_for_document(term_counts, claim_terms)
+    doc_title_norm = get_tfidf_vector_norm(doc_title_terms, args.debug, args.variant)
+
+    dot_product = get_doc_product(claim_vector, doc_title_vector)
+    norms_product = claim_norm * doc_title_norm
+    if not norms_product:
+        # happens if all tokens in doc title are non-alphanumeric or unseen in IDF generation
+        return 0
+
+    cosine_sim = dot_product / norms_product
+    return cosine_sim
+
+
+def scoring_function(claim_terms: list,
+                     claim_vector: list,
+                     claim_norm: float,
+                     doc_with_coordination_terms: tuple) -> tuple:
+    page_id = doc_with_coordination_terms[0]
+    cosine_claim_doc_text = get_claim_doc_text_cosine_similarity(claim_terms, claim_vector, claim_norm, doc_with_coordination_terms)
+    cosine_claim_doc_title = get_claim_doc_title_cosine_similarity(claim_terms, claim_vector, claim_norm, doc_with_coordination_terms)
+    title_weight = args.doc_title or 0
+    score = title_weight * cosine_claim_doc_title + (1 - title_weight) * cosine_claim_doc_text
+    # if args.debug:
+    #     print('Claim: "{}", title: {}, score: {}'.format(claim_terms, doc_with_coordination_terms[0], score))
+    return page_id, score
 
 
 def retrieve_documents_for_claim(claim: str, claim_id: int):
     print(colored('Retrieving documents for claim [{}]: "{}"'.format(claim_id, claim), attrs=['bold']))
-    preprocessed_claim = preprocess_claim(claim)
+    preprocessed_claim = preprocess_text(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
     claim_vector = get_tfidf_vector_for_claim(claim_terms)
     claim_norm = get_tfidf_vector_norm(claim_terms, args.debug, args.variant)
@@ -92,7 +128,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
 
     # similarity scores for each claim-doc combination
     docs_with_similarity_scores = [
-        get_claim_doc_cosine_similarity(claim_terms, claim_vector, claim_norm, doc_with_terms) for doc_with_terms in
+        scoring_function(claim_terms, claim_vector, claim_norm, doc_with_terms) for doc_with_terms in
         doc_candidates.items()]
 
     # sort by similarity and limit to top results
