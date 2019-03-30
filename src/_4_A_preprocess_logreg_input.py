@@ -5,8 +5,9 @@ import argparse
 import numpy as np
 import pandas as pd
 
+from dataaccess.access_dev_data import dev_claim_is_verifiable
 from dataaccess.access_glove_embeddings import get_embedding
-from dataaccess.access_training_data import get_training_claim, get_training_claim_row, is_verifiable
+from dataaccess.access_training_data import get_training_claim, get_training_claim_row, training_claim_is_verifiable
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA
 from dataaccess.files_io import write_pickle
@@ -84,7 +85,9 @@ if __name__ == '__main__':
     for claim_with_docs in claims_and_retrieved_docs.iterrows():
         claim_id = claim_with_docs[0]
         # remove any NOT_VERIFIABLE claims that were processed earlier
-        if not is_verifiable(claim_id):
+        if args.dataset.startswith('train') and not training_claim_is_verifiable(claim_id):
+            continue
+        elif args.dataset == 'dev' and not dev_claim_is_verifiable(claim_id):
             continue
 
         claim = preprocess_text(get_training_claim(claim_id))

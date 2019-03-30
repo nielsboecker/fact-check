@@ -18,5 +18,5 @@ def get_all_dev_claims() -> pd.DataFrame:
     return claims
 
 
-# def is_verifiable(claim_id: int) -> bool:
-#     return claims.loc[claim_id]['verifiable'] == 'VERIFIABLE'
+def dev_claim_is_verifiable(claim_id: int) -> bool:
+    return claims.loc[claim_id]['verifiable'] == 'VERIFIABLE'
