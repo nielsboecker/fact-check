@@ -15,7 +15,9 @@ from model.wiki_document import WikiDocument
 from util.vector_algebra import get_min_max_vectors
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--debug", help="don't load GloVe embeddings, use fake vectors", action="store_true")
+parser.add_argument('--debug', help='don\'t load GloVe embeddings, use fake vectors', action='store_true')
+parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev'], default='train')
+#parser.add_argument('--in_file', type=str, required=True)
 args = parser.parse_args()
 
 PREPROCESSED_DATA_COLUMNS = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']
@@ -68,9 +70,15 @@ def get_evidence_page_line_map(claim_id: int) -> dict:
 
 
 if __name__ == '__main__':
-    in_path = './submission/Q3_laplace_lindstone_0.01.csv'  # TODO: which dataset
-    claims_and_retrieved_docs = pd.read_csv(in_path, delimiter=',', quotechar='|', header=0, index_col=0)
+    in_path = None
+    if args.dataset == 'train':
+        in_path = './submission/retrieved_train/Q3_laplace_lindstone_0.01.csv'
+    elif args.dataset == 'train_all':
+        in_path = './submission/retrieved_train/Q3_laplace_lindstone_0.01_10000_claims.csv'
+    elif args.dataset == 'dev':
+        in_path = './submission/retrieved_dev/Q3_laplace_lindstone_0.01.csv'
 
+    claims_and_retrieved_docs = pd.read_csv(in_path, delimiter=',', quotechar='|', header=0, index_col=0)
     preprocessed = []
 
     for claim_with_docs in claims_and_retrieved_docs.iterrows():

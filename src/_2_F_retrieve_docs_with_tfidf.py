@@ -20,7 +20,7 @@ from util.vector_semantics import get_tfidf_vector_norm
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
-parser.add_argument('--doc_title', help='[0...1] weight of doc title vs. doc text', type=float, default=0.5)
+parser.add_argument('--doc_title', help='[0...1] weight of doc title vs. doc text', type=float, default=0.)
 parser.add_argument('--dataset', choices=['train', 'dev'], type=str, default='train')
 parser.add_argument('--id', help='process only this ID of a claim to retrieve for test purposes', type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
