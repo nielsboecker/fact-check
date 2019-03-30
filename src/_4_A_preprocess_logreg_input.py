@@ -8,7 +8,7 @@ import pandas as pd
 from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_training_data import get_training_claim, get_training_claim_row, is_verifiable
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.constants import PREPROCESSED_TRAINING_DATA
+from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA
 from dataaccess.files_io import write_pickle
 from documentretrieval.claim_processing import preprocess_text
 from model.wiki_document import WikiDocument
@@ -90,4 +90,4 @@ if __name__ == '__main__':
         for doc in docs:
             preprocessed.extend(preprocess_doc(claim_id, claim, doc, evidence_map))
 
-    write_pickle(PREPROCESSED_TRAINING_DATA, preprocessed)
+    write_pickle(GENERATED_PREPROCESSED_TRAINING_DATA, preprocessed)

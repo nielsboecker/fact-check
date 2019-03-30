@@ -21,5 +21,5 @@ def display_or_store_result(claim: str, claim_id: int, result_docs: list, dir_pa
     else:
         #result_path = '{}{}.jsonl'.format(path, claim_id)
         #write_list_to_jsonl(result_path, result_docs)
-        print(colored('Storing results for claim "{}\n{}":'.format(claim, result_docs), 'yellow'))
+        print(colored('Storing results for claim "{}"\n{}:'.format(claim, result_docs), 'yellow'))
         write_list_to_oneline_csv(dir_path, claim_id, result_docs)
