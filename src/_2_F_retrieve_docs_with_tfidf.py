@@ -5,12 +5,13 @@ from operator import itemgetter
 
 from termcolor import colored
 
+from dataaccess.access_dev_data import get_dev_claim_row, get_all_dev_claims
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc_text
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
+from dataaccess.access_training_data import get_training_claim_row, get_all_training_claims
 from dataaccess.access_words_idf_mapping import get_idf_for_term
-from dataaccess.constants import DATA_TRAINING_PATH, RETRIEVED_TFIDF_DIRECTORY, \
-    CLAIMS_COLUMNS_LABELED, DOCS_TO_RETRIEVE_PER_CLAIM
-from dataaccess.files_io import read_jsonl_and_map_to_df
+from dataaccess.constants import RETRIEVED_TFIDF_DIRECTORY, \
+    DOCS_TO_RETRIEVE_PER_CLAIM
 from documentretrieval.claim_processing import preprocess_text, display_or_store_result
 from documentretrieval.document_processing import preprocess_doc_title
 from documentretrieval.term_processing import process_normalise_tokenise_filter
@@ -20,13 +21,12 @@ from util.vector_semantics import get_tfidf_vector_norm
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
 parser.add_argument('--doc_title', help='[0...1] weight of doc title vs. doc text', type=float, default=0.5)
+parser.add_argument('--dataset', choices=['train', 'dev'], type=str, default='train')
 parser.add_argument('--id', help='process only this ID of a claim to retrieve for test purposes', type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 parser.add_argument('--debug', help='show more print statements', action='store_true')
 args = parser.parse_args()
-
-claims = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)
 
 
 def get_tfidf_vector_for_document(coordination_terms_for_doc: dict, claim_terms: list):
@@ -145,6 +145,12 @@ def retrieve_document_for_claim_row(claim_row: tuple):
 
 
 def retrieve_documents_for_all_claims():
+    claims = None
+    if args.dataset == 'train':
+        claims = get_all_training_claims()
+    elif args.dataset == 'dev':
+        claims = get_all_dev_claims()
+
     pool = get_process_pool()
     if (args.limit):
         pool.map(retrieve_document_for_claim_row, claims.head(n=15).iterrows())
@@ -155,7 +161,7 @@ def retrieve_documents_for_all_claims():
 if __name__ == '__main__':
     start_time = time.time()
     if args.id:
-        claim = claims.loc[args.id]
+        claim = get_training_claim_row(args.id) if args.dataset == 'train' else get_dev_claim_row(args.id)
         document = retrieve_document_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()

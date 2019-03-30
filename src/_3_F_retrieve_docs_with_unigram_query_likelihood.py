@@ -9,6 +9,7 @@ from _3_C_laplace_smoothing import get_query_likelihood_score_laplace_lindstone_
     get_query_likelihood_score_laplace_smoothing
 from _3_D_jelinek_mercer_smoothing import get_query_likelihood_score_jelinek_mercer_smoothing
 from _3_E_dirichlet_smoothing import get_query_likelihood_score_dirichlet_smoothing
+from dataaccess.access_dev_data import get_all_dev_claims, get_dev_claim_row
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.access_training_data import get_all_training_claims, get_training_claim_row
 from dataaccess.constants import DOCS_TO_RETRIEVE_PER_CLAIM, \
@@ -24,6 +25,7 @@ parser.add_argument('--remove_zero_likelihood', help='if documents yield query l
                     action='store_true')
 parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)',
                     type=int)
+parser.add_argument('--dataset', choices=['train', 'dev'], type=str, default='train')
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 args = parser.parse_args()
@@ -71,17 +73,23 @@ def retrieve_documents_for_claim_row(claim_row: tuple):
 
 
 def retrieve_documents_for_all_claims():
+    claims = None
+    if args.dataset == 'train':
+        claims = get_all_training_claims()
+    elif args.dataset == 'dev':
+        claims = get_all_dev_claims()
+
     pool = get_process_pool()
     if (args.limit):
-        pool.map(retrieve_documents_for_claim_row, get_all_training_claims().head(n=15).iterrows())
+        pool.map(retrieve_documents_for_claim_row, claims.head(n=15).iterrows())
     else:
-        pool.map(retrieve_documents_for_claim_row, get_all_training_claims().iterrows())
+        pool.map(retrieve_documents_for_claim_row, claims.iterrows())
 
 
 if __name__ == '__main__':
     start_time = time.time()
     if (args.id):
-        claim = get_training_claim_row(args.id)
+        claim = get_training_claim_row(args.id) if args.dataset == 'train' else get_dev_claim_row(args.id)
         document = retrieve_documents_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()
