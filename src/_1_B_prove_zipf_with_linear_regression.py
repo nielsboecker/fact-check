@@ -3,8 +3,9 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 
-from dataaccess.constants import GENERATED_COUNTS_PATH, GENERATED_BASE_PATH
+from dataaccess.constants import GENERATED_COUNTS_PATH
 from dataaccess.files_io import read_jsonl_and_map_to_df
+from util.plots import show_plot_and_save_figure
 
 
 def verify_plot_zipfs_law():
@@ -27,9 +28,7 @@ def verify_plot_zipfs_law():
     plt.figtext(0.3, 0.45, '$R^2 = {:.5f}$'.format(r_squared))
     # plt.legend()
 
-    figure_path = GENERATED_BASE_PATH + '1_distribution_zipf.png'
-    plt.savefig(figure_path, dpi=300)
-    plt.show()
+    show_plot_and_save_figure('1_distribution_zipf.png')
 
 
 if __name__ == '__main__':

@@ -81,7 +81,7 @@ def retrieve_documents_for_all_claims():
 
     pool = get_process_pool()
     if (args.limit):
-        pool.map(retrieve_documents_for_claim_row, claims.head(n=15).iterrows())
+        pool.map(retrieve_documents_for_claim_row, claims.head(n=16).iterrows())
     else:
         pool.map(retrieve_documents_for_claim_row, claims.iterrows())
 

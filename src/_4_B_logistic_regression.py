@@ -7,7 +7,7 @@ NUM_EPOCHS = 10000       # TODO
 LEARNING_RATE = 0.01     # TODO
 
 
-class LogisticRegression:
+class LogisticRegressionModel:
     def __init__(self, weights: ndarray):
         self.weights = weights
 
@@ -26,9 +26,11 @@ def get_loss(hypothesis: ndarray, actual: ndarray) -> float: # TODO
     return (-actual * np.log(hypothesis) - (1 - actual) * np.log(1 - hypothesis)).mean()
 
 
-def fit_and_get_model(in_values: ndarray, out_expected: ndarray) -> LogisticRegression:
+def fit_and_get_model(in_values: ndarray, out_expected: ndarray, debug: bool = False) -> tuple:
+    global NUM_EPOCHS, LEARNING_RATE
     # TODO: intercept!
     start_time = time.time()
+    print('Start logistc regression fitting')
 
     dimension = in_values.shape[1]
     num_of_datapoints = len(out_expected) * dimension # out_expected.size
@@ -36,7 +38,13 @@ def fit_and_get_model(in_values: ndarray, out_expected: ndarray) -> LogisticRegr
     # initialise weights as ndarray with length 600
     weights = np.zeros(dimension)
 
-    #
+    # keep track of loss values to verify learning
+    loss_values = []
+
+    if (debug):
+        NUM_EPOCHS = 1000
+
+    # improve weights to fit expected output better
     for i in range(NUM_EPOCHS):
         z = np.dot(in_values, weights)
         hypothesis = sigmoid(z)
@@ -48,7 +56,7 @@ def fit_and_get_model(in_values: ndarray, out_expected: ndarray) -> LogisticRegr
 
         # TODO
         if i % 100 == 0:
-            print(get_loss(hypothesis, out_expected))
+            loss_values.append(get_loss(hypothesis, out_expected))
 
     print('Finished fitting after {:.2f} seconds\nFinal weights: {}'.format(time.time() - start_time, weights))
-    return LogisticRegression(weights)
+    return LogisticRegressionModel(weights), loss_values
