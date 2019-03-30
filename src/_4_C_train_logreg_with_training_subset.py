@@ -6,11 +6,7 @@ from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED
 from dataaccess.files_io import read_pickle, write_pickle
 
 #if __name__ == '__main__':
-training_data = read_pickle(GENERATED_PREPROCESSED_TRAINING_DATA)
-
-# todo: move transformation to generation
-training_data = pd.DataFrame.from_records(training_data,
-                                          columns=['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output'])
+training_data : pd.DataFrame = read_pickle(GENERATED_PREPROCESSED_TRAINING_DATA)
 
 # use DataFrame.values to unpack the ndarrays in each cell
 train_input_values = training_data['input_vector'].values

@@ -18,6 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="don't load GloVe embeddings, use fake vectors", action="store_true")
 args = parser.parse_args()
 
+PREPROCESSED_DATA_COLUMNS = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']
 
 def transform_sentence_to_vector(sentence: str):
     # Refer to https://arxiv.org/pdf/1607.00570.pdf
@@ -90,4 +91,5 @@ if __name__ == '__main__':
         for doc in docs:
             preprocessed.extend(preprocess_doc(claim_id, claim, doc, evidence_map))
 
-    write_pickle(GENERATED_PREPROCESSED_TRAINING_DATA, preprocessed)
+    training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
+    write_pickle(GENERATED_PREPROCESSED_TRAINING_DATA, training_data)
