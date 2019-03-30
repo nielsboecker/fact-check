@@ -60,7 +60,7 @@ def write_pickle(output_path: str, payload: object):
     print('Stored pickle to "{}"'.format(output_path))
 
 
-def read_pickle(input_path: str) -> object:
+def read_pickle(input_path: str):
     loaded_pickle = pickle.load(open(input_path, "rb"))
     print('Loaded pickle from {}'.format(input_path))
     return loaded_pickle

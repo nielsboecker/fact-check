@@ -9,7 +9,7 @@ from dataaccess.access_dev_data import dev_claim_is_verifiable
 from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_training_data import get_training_claim, get_training_claim_row, training_claim_is_verifiable
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA
+from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
 from documentretrieval.claim_processing import preprocess_text
 from model.wiki_document import WikiDocument
@@ -103,4 +103,6 @@ if __name__ == '__main__':
             preprocessed.extend(preprocess_doc(claim_id, claim, doc, evidence_map))
 
     training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
-    write_pickle(GENERATED_PREPROCESSED_TRAINING_DATA, training_data)
+    output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
+        else GENERATED_PREPROCESSED_DEV_DATA
+    write_pickle(output_path, training_data)
