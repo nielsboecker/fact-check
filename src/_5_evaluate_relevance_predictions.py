@@ -10,18 +10,24 @@ from util.logreg_preprocessing import extract_input_and_expected
 def get_precision(predicted: np.ndarray, actual: np.ndarray) -> float:
     true_positive = get_true_positive(predicted, actual)
     false_positive = get_false_positive(predicted, actual)
+    if not true_positive and not false_positive:
+        return 0
     return true_positive / (true_positive + false_positive)
 
 
 def get_recall(predicted: np.ndarray, actual: np.ndarray) -> float:
     true_positive = get_true_positive(predicted, actual)
     false_negative = get_false_negative(predicted, actual)
+    if not true_positive and not false_negative:
+        return 0
     return true_positive / (true_positive + false_negative)
 
 
 def get_f1_score(predicted: np.ndarray, actual: np.ndarray) -> float:
     precision = get_precision(predicted, actual)
     recall = get_recall(predicted, actual)
+    if not precision or not recall:
+        return 0
     return 2 * (precision * recall) / (precision + recall)
 
 
