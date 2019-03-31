@@ -26,6 +26,6 @@ if __name__ == '__main__':
     prepare_seaborn_plots()
     plt.xlabel('Epochs')
     plt.ylabel('Cross-Entropy Loss')
-    plt.plot([i * 100 for i in range(10)], loss_values, linewidth=4)
+    plt.plot([i * 500 for i in range(len(loss_values))], loss_values, linewidth=4)
 
     show_plot_and_save_figure('logistic_regression_loss_values.png')
