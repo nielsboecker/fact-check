@@ -1,7 +1,7 @@
 seaborn
 numpy
 jsonlines
-pandas
+pandas==0.24.2
 matplotlib
 jupyter
 termcolor
