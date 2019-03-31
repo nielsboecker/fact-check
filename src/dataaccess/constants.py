@@ -55,7 +55,7 @@ def get_wiki_id_to_batch_submap_id(page_id: str) -> int:
 
 
 def get_wiki_id_to_batch_submap_path(submap_id: int) -> str:
-    return '{}{:03}.jsonl'.format(GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY, submap_id)
+    return '{}{:03}.json'.format(GENERATED_WIKI_PAGE_SUBMAP_DIRECTORY, submap_id)
 
 
 def get_inverted_index_shard_id(page_id: str) -> int:

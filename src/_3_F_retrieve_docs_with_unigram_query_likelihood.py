@@ -9,9 +9,8 @@ from _3_C_laplace_smoothing import get_query_likelihood_score_laplace_lindstone_
     get_query_likelihood_score_laplace_smoothing
 from _3_D_jelinek_mercer_smoothing import get_query_likelihood_score_jelinek_mercer_smoothing
 from _3_E_dirichlet_smoothing import get_query_likelihood_score_dirichlet_smoothing
-from dataaccess.access_dev_data import get_all_dev_claims, get_dev_claim_row
+from dataaccess.access_claims import get_all_claims, get_claim_row
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
-from dataaccess.access_training_data import get_all_training_claims, get_training_claim_row
 from dataaccess.constants import DOCS_TO_RETRIEVE_PER_CLAIM, \
     RETRIEVED_PROBABILISTIC_DIRECTORY
 from documentretrieval.claim_processing import preprocess_text, display_or_store_result
@@ -73,11 +72,7 @@ def retrieve_documents_for_claim_row(claim_row: tuple):
 
 
 def retrieve_documents_for_all_claims():
-    claims = None
-    if args.dataset == 'train':
-        claims = get_all_training_claims()
-    elif args.dataset == 'dev':
-        claims = get_all_dev_claims()
+    claims = claims = get_all_claims(dataset=args.dataset)
 
     pool = get_process_pool()
     if (args.limit):
@@ -89,7 +84,7 @@ def retrieve_documents_for_all_claims():
 if __name__ == '__main__':
     start_time = time.time()
     if (args.id):
-        claim = get_training_claim_row(args.id) if args.dataset == 'train' else get_dev_claim_row(args.id)
+        claim = get_claim_row(args.id, dataset=args.dataset)
         document = retrieve_documents_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()

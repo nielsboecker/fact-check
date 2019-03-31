@@ -5,9 +5,8 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from dataaccess.access_dev_data import dev_claim_is_verifiable
+from dataaccess.access_claims import get_claim, get_claim_row, claim_is_verifiable
 from dataaccess.access_glove_embeddings import get_embedding
-from dataaccess.access_training_data import get_training_claim, get_training_claim_row, training_claim_is_verifiable
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
@@ -64,7 +63,7 @@ def preprocess_doc(claim_id: int, claim: str, doc: WikiDocument, evidence_map: d
 
 def get_evidence_page_line_map(claim_id: int) -> dict:
     mapping = {}
-    evidence = get_training_claim_row(claim_id)['evidence'][0]
+    evidence = get_claim_row(claim_id, dataset=args.dataset)['evidence'][0]
     for _, _, page_id, line_id in evidence:
         mapping.setdefault(page_id, []).append(line_id)
     return mapping
@@ -85,12 +84,10 @@ if __name__ == '__main__':
     for claim_with_docs in claims_and_retrieved_docs.iterrows():
         claim_id = claim_with_docs[0]
         # remove any NOT_VERIFIABLE claims that were processed earlier
-        if args.dataset.startswith('train') and not training_claim_is_verifiable(claim_id):
-            continue
-        elif args.dataset == 'dev' and not dev_claim_is_verifiable(claim_id):
+        if not claim_is_verifiable(claim_id, dataset=args.dataset):
             continue
 
-        claim = preprocess_text(get_training_claim(claim_id))
+        claim = preprocess_text(get_claim(claim_id, dataset=args.dataset))
         evidence_map = get_evidence_page_line_map(claim_id)
 
         retrieved_doc_ids = set(claim_with_docs[1])

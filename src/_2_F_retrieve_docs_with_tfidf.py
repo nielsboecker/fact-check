@@ -5,10 +5,9 @@ from operator import itemgetter
 
 from termcolor import colored
 
-from dataaccess.access_dev_data import get_dev_claim_row, get_all_dev_claims
+from dataaccess.access_claims import get_claim_row, get_all_claims
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc_text
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
-from dataaccess.access_training_data import get_training_claim_row, get_all_training_claims
 from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.constants import RETRIEVED_TFIDF_DIRECTORY, \
     DOCS_TO_RETRIEVE_PER_CLAIM
@@ -145,11 +144,7 @@ def retrieve_document_for_claim_row(claim_row: tuple):
 
 
 def retrieve_documents_for_all_claims():
-    claims = None
-    if args.dataset == 'train':
-        claims = get_all_training_claims()
-    elif args.dataset == 'dev':
-        claims = get_all_dev_claims()
+    claims = get_all_claims(dataset=args.dataset)
 
     pool = get_process_pool()
     if (args.limit):
@@ -161,7 +156,7 @@ def retrieve_documents_for_all_claims():
 if __name__ == '__main__':
     start_time = time.time()
     if args.id:
-        claim = get_training_claim_row(args.id) if args.dataset == 'train' else get_dev_claim_row(args.id)
+        claim = get_claim_row(args.id, dataset=args.dataset)
         document = retrieve_document_for_claim_row((None, claim))
     else:
         retrieve_documents_for_all_claims()
