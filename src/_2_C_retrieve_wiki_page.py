@@ -1,10 +1,13 @@
+# Note: This file is mostly just for testing dataaccess.access_wiki_page,
+# where the actual retrieval takes place
+
 import argparse
 import time
 
 from dataaccess.access_wiki_page import retrieve_wiki_page
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--id", help="ID of a document to retrieve for test purposes")
+parser.add_argument("--id", help="ID of a document to retrieve for test purposes", required=True)
 parser.add_argument("--complete", help="print complete doc text instead of ID + text preview", action="store_true")
 args = parser.parse_args()
 
