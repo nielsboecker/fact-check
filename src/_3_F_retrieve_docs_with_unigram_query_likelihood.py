@@ -72,7 +72,7 @@ def retrieve_documents_for_claim_row(claim_row: tuple):
 
 
 def retrieve_documents_for_all_claims():
-    claims = claims = get_all_claims(dataset=args.dataset)
+    claims = get_all_claims(dataset=args.dataset)
 
     pool = get_process_pool()
     if (args.limit):
