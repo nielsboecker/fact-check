@@ -1,6 +1,10 @@
 import numpy as np
 
 
+# seed random for reproducibility
+np.random.seed(0)
+
+
 def get_true_positive(predicted: np.ndarray, actual: np.ndarray) -> int:
     true_positives = 0
     for i in range (len(predicted)):
@@ -30,5 +34,12 @@ def get_accuracy(predicted: np.ndarray, actual: np.ndarray) -> float:
     return correspondence.mean()
 
 
-def get_baserate_prediction(sample: np.ndarray) -> np.ndarray:
-    return np.zeros_like(sample)
+def get_baserate_probabilities(sample: np.ndarray) -> np.ndarray:
+    return np.random.sample(len(sample))
+
+
+def get_baserate_predictions(sample: np.ndarray, zeros: bool = True) -> np.ndarray:
+    if zeros:
+        return np.zeros_like(sample)
+    else:
+        return np.random.random_integers(0, 1, len(sample))
