@@ -3,7 +3,7 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
-from sklearn.metrics import roc_auc_score, precision_recall_curve, auc, average_precision_score
+from sklearn.metrics import roc_auc_score, precision_recall_curve, auc, average_precision_score, roc_curve
 
 from _4_B_logistic_regression import LogisticRegressionModel
 from dataaccess.constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
@@ -16,17 +16,38 @@ from util.plots import prepare_seaborn_plots, show_plot_and_save_figure
 
 def plot_precision_recall_curve():
     prepare_seaborn_plots()
-    # precision-recall curve for the model
+
+    # precision-recall curve for the model and baserate
     plt.plot(model_recall, model_precision, marker='.', label='Trained logistic regression')
-    # precision-recall curve for the baserate
     plt.plot(baserate_recall, baserate_precision, marker='.', label='Base rate model')
-    # no skill, i.e. percentage of 1's in the expected output
-    baserate = np.count_nonzero(dev_expected) / len(dev_expected)
-    plt.plot([0, 1], [baserate, baserate], linestyle='--', label='Percentage of events in data')
+    # percentage of 1's in the expected output
+    percentage = np.count_nonzero(dev_expected) / len(dev_expected)
+    plt.plot([0, 1], [percentage, percentage], linestyle='--', label='Percentage of events in data')
+
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.legend()
     show_plot_and_save_figure('precision_recall_curve.png')
+
+
+def plot_roc_auc_curve():
+    # ROC curve for the model and random base rate
+    model_false_positives, model_true_positives, _ = roc_curve(dev_expected, model_probabilities)
+    base_random_false_positives, base_random_true_positives, _ = roc_curve(dev_expected, baserate_probabilities)
+
+    #
+    zero_probabilites = get_baserate_predictions(dev_expected, zeros=True)
+    base_zero_false_positives, base_zero_true_positives, _ = roc_curve(dev_expected, zero_probabilites)
+
+    plt.plot(model_false_positives, model_true_positives, label='Trained logistic regression')
+    plt.plot(base_zero_false_positives, base_zero_true_positives,label='Base rate model (zeros)')
+    plt.plot(base_random_false_positives, base_random_true_positives,label='Base rate model (random)')
+    # plt.plot([0, 1], [0, 1], linestyle='--', label='Random guessing expectation')
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.legend()
+    show_plot_and_save_figure('roc_auc_curve')
 
 
 if __name__ == '__main__':
@@ -54,8 +75,8 @@ if __name__ == '__main__':
     print('*' * 40)
 
     # precision-recall curve
-    baserate_precision, baserate_recall, baserate_thresholds = precision_recall_curve(dev_expected, baserate_probabilities)
-    model_precision, model_recall, model_thresholds = precision_recall_curve(dev_expected, model_probabilities)
+    baserate_precision, baserate_recall, _ = precision_recall_curve(dev_expected, baserate_probabilities)
+    model_precision, model_recall, _ = precision_recall_curve(dev_expected, model_probabilities)
 
     # precision-recall AUC
     precision_recall_auc = auc(model_recall, model_precision)
@@ -64,5 +85,7 @@ if __name__ == '__main__':
     # average precision score
     avg_precision_score = average_precision_score(dev_expected, model_probabilities)
     print('Average Precision Score: {}'.format(avg_precision_score))
+
+    plot_roc_auc_curve()
 
     plot_precision_recall_curve()
