@@ -109,16 +109,32 @@ if __name__ == '__main__':
         in_path = './submission/retrieved_dev/Q3_laplace_lindstone_0.01_10000_claims.csv.csv'
 
     claims_and_retrieved_docs = pd.read_csv(in_path, delimiter=',', quotechar='|', header=0, index_col=0)
-
     pool = get_process_pool()
-    partial_results = pool.map(preprocess_claim_with_doc, claims_and_retrieved_docs.iterrows())
 
-    print('Merging partial results...')
-    preprocessed = list(chain.from_iterable(partial_results))
+    # 10,000 claims + sentences too much to keep in memory at once
+    if args.dataset.endswith('all') or args.file.endswith('all'):
+        print('batch processing data')
+        claims_split = np.array_split(claims_and_retrieved_docs, 20)
+        for i, batch in enumerate(claims_split):
+            partial_results = pool.map(preprocess_claim_with_doc, batch.iterrows())
+            print('Merging partial results...')
+            preprocessed = list(chain.from_iterable(partial_results))
 
-    training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
-    output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
-        else GENERATED_PREPROCESSED_DEV_DATA
-    if args.file:
-        output_path += os.path.basename(args.file)
-    write_pickle(output_path, training_data)
+            training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
+            output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
+                else GENERATED_PREPROCESSED_DEV_DATA
+            output_path += str(i)
+            write_pickle(output_path, training_data)
+
+    # just small subset of data
+    else:
+        partial_results = pool.map(preprocess_claim_with_doc, claims_and_retrieved_docs.iterrows())
+        print('Merging partial results...')
+        preprocessed = list(chain.from_iterable(partial_results))
+
+        training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
+        output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
+            else GENERATED_PREPROCESSED_DEV_DATA
+        if args.file:
+            output_path += os.path.basename(args.file)
+        write_pickle(output_path, training_data)
