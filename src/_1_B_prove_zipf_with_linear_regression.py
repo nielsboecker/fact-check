@@ -5,7 +5,7 @@ from scipy import stats
 
 from dataaccess.constants import GENERATED_COUNTS_PATH
 from dataaccess.files_io import read_jsonl_and_map_to_df
-from util.plots import show_plot_and_save_figure
+from util.plots import show_plot_and_save_figure, prepare_seaborn_plots
 
 
 def verify_plot_zipfs_law():
@@ -20,6 +20,7 @@ def verify_plot_zipfs_law():
     r_squared = r_value ** 2
     print('slope: {}; intercept: {}; r-squared: {}'.format(slope, intercept, r_squared))
 
+    prepare_seaborn_plots()
     plt.plot(x_ranks_log, y_counts_log, 'o')  # label='word frequencies')
     plt.plot(x_ranks_log, [intercept + slope * rank for rank in x_ranks_log], 'red')  # , label='fitted line')
 
