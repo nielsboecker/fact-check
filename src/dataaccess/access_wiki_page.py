@@ -1,24 +1,22 @@
+import pandas as pd
 from termcolor import colored
 
-from dataaccess.files_constants import get_wiki_id_to_batch_submap_id, get_wiki_id_to_batch_submap_path, get_wiki_batch_path
-from dataaccess.files_io import read_dict_from_json
+from dataaccess.files_constants import get_wiki_batch_path, GENERATED_WIKI_PAGE_MAPPINGS_PATH
+from dataaccess.files_io import read_pickle
 from model.wiki_document import WikiDocument
+
+wiki_page_mapping: pd.DataFrame = read_pickle(GENERATED_WIKI_PAGE_MAPPINGS_PATH)
 
 
 def retrieve_wiki_page(page_id: str) -> WikiDocument:
-    # Use supmap id to retrieve the actual mapping
-    submap_id = get_wiki_id_to_batch_submap_id(page_id)
-    submap_path = get_wiki_id_to_batch_submap_path(submap_id)
-    submap = read_dict_from_json(submap_path)
-
-    # Find actual mapping and read only relevant line from wiki-pages batch
-    batch_id, line_index = submap[page_id]
+    # Find correct batch file and read only relevant line
+    batch_id, line = wiki_page_mapping.loc[page_id]
     wiki_batch_path = get_wiki_batch_path(batch_id)
 
     with open(wiki_batch_path) as fp:
         for i, line in enumerate(fp):
-            if i == line_index:
+            if i == line:
                 return WikiDocument(line)
 
     # If this code runs, a mapping error occured
-    print(colored('Coudn\'t find document "{}" in batch #{}, after mapping from submap {}'.format(page_id, batch_id, submap_id)), 'red')
+    print(colored('Error: Line {} not found in wiki-page {}'.format(line, batch_id)), 'red')
