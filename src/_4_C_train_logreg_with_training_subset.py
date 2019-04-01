@@ -3,8 +3,9 @@ import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from _4_B_logistic_regression import fit_and_get_model, LogisticRegressionModel, LOSS_HISTORY_FREQUENCY
-from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_LOGISTIC_REGRESSION_MODEL
+from _4_B_logistic_regression import fit_and_get_model, LOSS_HISTORY_FREQUENCY
+from model.logistic_regression import LogisticRegressionModel
+from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_LOGISTIC_REGRESSION_MODEL
 from dataaccess.files_io import read_pickle, write_pickle
 from util.logreg_preprocessing import extract_input_and_expected
 from util.plots import show_plot_and_save_figure, prepare_seaborn_plots

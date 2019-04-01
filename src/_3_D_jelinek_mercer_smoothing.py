@@ -3,8 +3,7 @@ from operator import mul as multiply
 
 from dataaccess.access_docs_lengths_mapping import get_length_of_doc
 from dataaccess.access_terms_frequencies_mapping import get_collection_probability_for_term
-from dataaccess.constants import COLLECTION_VOCABULARY_SIZE
-
+from documentretrieval.data_constants import COLLECTION_VOCABULARY_SIZE
 
 LAMBDA = 0.5    # Initial value, could get improved with more empirical data
 

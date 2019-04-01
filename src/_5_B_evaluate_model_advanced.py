@@ -5,8 +5,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.metrics import roc_auc_score, precision_recall_curve, auc, average_precision_score, roc_curve
 
-from _4_B_logistic_regression import LogisticRegressionModel
-from dataaccess.constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
+from model.logistic_regression import LogisticRegressionModel
+from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import read_pickle
 from util.evaluation import get_baserate_predictions, \
     get_baserate_probabilities

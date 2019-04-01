@@ -6,8 +6,8 @@ from multiprocessing import Pool, cpu_count
 
 from termcolor import colored
 
-from dataaccess.constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH, TERM_COLOURS, \
-    COLLECTION_DOCUMENTS_NUMBER
+from dataaccess.files_constants import DATA_WIKI_PATH, GENERATED_COUNTS_PATH, GENERATED_IDF_PATH
+from documentretrieval.data_constants import COLLECTION_DOCUMENTS_NUMBER
 from dataaccess.files_io import read_jsonl_and_map_to_df, write_list_to_jsonl
 from documentretrieval.document_processing import filter_documents, reduce_document_to_text_column
 from documentretrieval.term_processing import process_normalise_tokenise_filter
@@ -15,6 +15,8 @@ from documentretrieval.term_processing import process_normalise_tokenise_filter
 parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
 args = parser.parse_args()
+
+TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
 
 def process_generate_df_batch(id: int) -> Counter:

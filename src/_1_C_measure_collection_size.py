@@ -3,7 +3,7 @@ import time
 from termcolor import colored
 
 from dataaccess.access_terms_frequencies_mapping import get_terms_with_occurrences_mapping
-from dataaccess.constants import get_wiki_batch_path
+from dataaccess.files_constants import get_wiki_batch_path
 from dataaccess.files_io import read_jsonl_and_map_to_df
 from documentretrieval.document_processing import filter_documents
 

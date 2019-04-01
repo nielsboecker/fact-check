@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 
-from dataaccess.constants import GENERATED_COUNTS_PATH
+from dataaccess.files_constants import GENERATED_COUNTS_PATH
 from dataaccess.files_io import read_jsonl_and_map_to_df
 from util.plots import show_plot_and_save_figure, prepare_seaborn_plots
 

@@ -2,8 +2,7 @@ from functools import reduce
 from operator import mul as multiply
 
 from dataaccess.access_docs_lengths_mapping import get_length_of_doc
-from dataaccess.constants import COLLECTION_VOCABULARY_SIZE
-
+from documentretrieval.data_constants import COLLECTION_VOCABULARY_SIZE
 
 LINDSTONE_CORRECTION_FACTOR = 0.01
 

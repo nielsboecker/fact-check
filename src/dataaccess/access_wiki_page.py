@@ -1,6 +1,6 @@
 from termcolor import colored
 
-from dataaccess.constants import get_wiki_id_to_batch_submap_id, get_wiki_id_to_batch_submap_path, get_wiki_batch_path
+from dataaccess.files_constants import get_wiki_id_to_batch_submap_id, get_wiki_id_to_batch_submap_path, get_wiki_batch_path
 from dataaccess.files_io import read_dict_from_json
 from model.wiki_document import WikiDocument
 

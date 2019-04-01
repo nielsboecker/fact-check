@@ -1,6 +1,7 @@
 import pandas as pd
 
-from dataaccess.constants import GENERATED_COUNTS_PATH, COLLECTION_TOTAL_WORDS
+from dataaccess.files_constants import GENERATED_COUNTS_PATH
+from documentretrieval.data_constants import COLLECTION_TOTAL_WORDS
 from dataaccess.files_io import read_jsonl_and_map_to_df
 
 terms_with_occurrences = read_jsonl_and_map_to_df(GENERATED_COUNTS_PATH, ['term', 'occurrences']).set_index('term', drop=False)

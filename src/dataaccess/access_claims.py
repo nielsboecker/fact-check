@@ -1,6 +1,7 @@
 import pandas as pd
 
-from dataaccess.constants import DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED, DATA_DEV_LABELED_PATH
+from dataaccess.files_constants import DATA_TRAINING_PATH, DATA_DEV_LABELED_PATH
+from documentretrieval.data_constants import CLAIMS_COLUMNS_LABELED
 from dataaccess.files_io import read_jsonl_and_map_to_df
 
 claims_training = read_jsonl_and_map_to_df(DATA_TRAINING_PATH, CLAIMS_COLUMNS_LABELED).set_index('id', drop=False)

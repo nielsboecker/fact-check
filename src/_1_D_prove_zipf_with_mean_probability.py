@@ -1,5 +1,5 @@
 from dataaccess.access_terms_frequencies_mapping import get_terms_with_occurrences_mapping
-from dataaccess.constants import COLLECTION_TOTAL_WORDS
+from documentretrieval.data_constants import COLLECTION_TOTAL_WORDS
 
 if __name__ == '__main__':
     vocabulary = get_terms_with_occurrences_mapping()

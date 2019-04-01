@@ -1,5 +1,5 @@
-from _4_B_logistic_regression import LogisticRegressionModel
-from dataaccess.constants import GENERATED_PREPROCESSED_DEV_DATA, \
+from model.logistic_regression import LogisticRegressionModel
+from dataaccess.files_constants import GENERATED_PREPROCESSED_DEV_DATA, \
     GENERATED_LOGISTIC_REGRESSION_MODEL
 from dataaccess.files_io import read_pickle
 from util.evaluation import get_accuracy, get_baserate_predictions

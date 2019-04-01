@@ -3,7 +3,7 @@ import time
 import numpy as np
 from gensim.models.keyedvectors import KeyedVectors, Word2VecKeyedVectors
 
-from dataaccess.constants import DATA_PRETRAINED_EMBEDDINGS_PATH
+from dataaccess.files_constants import DATA_PRETRAINED_EMBEDDINGS_PATH
 
 glove_model = None
 

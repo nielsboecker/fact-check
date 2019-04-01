@@ -1,4 +1,4 @@
-from dataaccess.constants import GENERATED_IDF_PATH
+from dataaccess.files_constants import GENERATED_IDF_PATH
 from dataaccess.files_io import read_jsonl_and_map_to_df
 
 words_with_idf = read_jsonl_and_map_to_df(GENERATED_IDF_PATH, ['word', 'idf']).set_index('word', drop=False)

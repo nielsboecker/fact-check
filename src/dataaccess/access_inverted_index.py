@@ -1,4 +1,4 @@
-from dataaccess.constants import get_inverted_index_shard_id, get_shard_path
+from dataaccess.files_constants import get_inverted_index_shard_id, get_shard_path
 from dataaccess.files_io import read_dict_from_json
 
 

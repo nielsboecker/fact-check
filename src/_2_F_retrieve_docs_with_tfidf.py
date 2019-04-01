@@ -9,7 +9,7 @@ from dataaccess.access_claims import get_claim_row, get_all_claims
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc_text
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.access_words_idf_mapping import get_idf_for_term
-from dataaccess.constants import RETRIEVED_TFIDF_DIRECTORY, \
+from dataaccess.files_constants import RETRIEVED_TFIDF_DIRECTORY, \
     DOCS_TO_RETRIEVE_PER_CLAIM
 from documentretrieval.claim_processing import preprocess_text, display_or_store_result
 from documentretrieval.document_processing import preprocess_doc_title

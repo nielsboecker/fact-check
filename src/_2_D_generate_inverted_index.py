@@ -6,7 +6,7 @@ from multiprocessing import cpu_count, Pool
 from termcolor import colored
 
 from dataaccess.access_words_idf_mapping import get_idf_for_term
-from dataaccess.constants import get_wiki_batch_path, get_inverted_index_shard_id, \
+from dataaccess.files_constants import get_wiki_batch_path, get_inverted_index_shard_id, \
     get_shard_path
 from dataaccess.files_io import read_jsonl_and_map_to_df, write_dict_to_json
 from documentretrieval.document_processing import filter_documents

@@ -6,14 +6,6 @@ hasher = pyhash.super_fast_hash()
 NUM_OF_WIKI_ID_TO_BATCH_SUBMAPS = 1000
 NUM_OF_INVERTED_INDEX_SHARDS = 10000
 
-# collection-specific data
-COLLECTION_DOCUMENTS_NUMBER = 5391645   # number of documents after filtering too short wiki-pages
-COLLECTION_VOCABULARY_SIZE = 2697407    # unique terms after filtering wiki-pages and processing documents
-COLLECTION_TOTAL_WORDS = 271036237      # number of total words after filtering wiki-pages and processing documents
-
-# claims-specific data
-CLAIMS_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
-
 # paths to data
 DATA_BASE_PATH = './data/'
 DATA_WIKI_PATH = DATA_BASE_PATH + 'wiki-pages/'
@@ -42,10 +34,6 @@ RETRIEVED_PROBABILISTIC_DIRECTORY = RETRIEVED_BASE_PATH + 'probabilistic/'
 
 # Retrieval parameters
 DOCS_TO_RETRIEVE_PER_CLAIM = 5
-
-# 3rd party libs
-TERM_COLOURS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
-
 
 def get_wiki_batch_path(batch_id):
     return '{}wiki-{:03}.jsonl'.format(DATA_WIKI_PATH, batch_id)

@@ -11,7 +11,7 @@ from _3_D_jelinek_mercer_smoothing import get_query_likelihood_score_jelinek_mer
 from _3_E_dirichlet_smoothing import get_query_likelihood_score_dirichlet_smoothing
 from dataaccess.access_claims import get_all_claims, get_claim_row
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
-from dataaccess.constants import DOCS_TO_RETRIEVE_PER_CLAIM, \
+from dataaccess.files_constants import DOCS_TO_RETRIEVE_PER_CLAIM, \
     RETRIEVED_PROBABILISTIC_DIRECTORY
 from documentretrieval.claim_processing import preprocess_text, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter

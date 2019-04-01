@@ -1,8 +1,8 @@
 import numpy as np
 from termcolor import colored
 
-from _4_B_logistic_regression import LogisticRegressionModel
-from dataaccess.constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
+from model.logistic_regression import LogisticRegressionModel
+from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import read_pickle
 from util.evaluation import get_true_positive, get_false_positive, get_false_negative, get_baserate_predictions
 from util.logreg_preprocessing import extract_input_and_expected

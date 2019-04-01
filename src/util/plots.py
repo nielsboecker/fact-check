@@ -3,7 +3,7 @@ from time import gmtime, strftime
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from dataaccess.constants import GENERATED_FIGURES_BASE_PATH
+from dataaccess.files_constants import GENERATED_FIGURES_BASE_PATH
 from dataaccess.files_io import create_dir_if_not_exists
 
 

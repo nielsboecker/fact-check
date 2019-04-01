@@ -8,7 +8,7 @@ import pandas as pd
 from dataaccess.access_claims import get_claim, get_claim_row, claim_is_verifiable
 from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
+from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
 from documentretrieval.claim_processing import preprocess_text
 from model.wiki_document import WikiDocument

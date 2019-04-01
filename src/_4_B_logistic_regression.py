@@ -3,38 +3,15 @@ import time
 import numpy as np
 from numpy import ndarray
 
+from model.logistic_regression import LogisticRegressionModel, sigmoid, prepend_intercept
+
 NUM_EPOCHS = 100000
 LEARNING_RATE = 0.01
 LOSS_HISTORY_FREQUENCY = 500
 
 
-class LogisticRegressionModel:
-    def __init__(self, weights: ndarray, num_epochs: int, learning_rate: float):
-        self.weights = weights
-        self.num_epochs = num_epochs
-        self.learning_rate = learning_rate
-
-    def get_probabilities(self, in_values: ndarray) -> ndarray:
-        in_values = prepend_intercept(in_values)
-        lin_regression = np.dot(in_values, self.weights)
-        hypothesis = sigmoid(lin_regression)
-        return hypothesis
-
-    def get_predictions(self, in_values: ndarray, threshold: float = 0.5) -> ndarray:
-        return self.get_probabilities(in_values) >= threshold
-
-
-def sigmoid(values: ndarray) -> ndarray:
-    return 1 / (1 + np.exp(-values))
-
-
 def get_loss(hypothesis: ndarray, actual: ndarray) -> float: # TODO
     return (-actual * np.log(hypothesis) - (1 - actual) * np.log(1 - hypothesis)).mean()
-
-
-def prepend_intercept(values: ndarray) -> ndarray:
-    intercept = np.ones((values.shape[0], 1))
-    return np.concatenate((intercept, values), axis=1)
 
 
 def fit_and_get_model(in_values: ndarray, out_expected: ndarray, debug: bool = False) -> tuple:

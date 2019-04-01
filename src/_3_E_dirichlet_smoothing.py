@@ -3,7 +3,7 @@ from operator import mul as multiply
 
 from dataaccess.access_docs_lengths_mapping import get_length_of_doc
 from dataaccess.access_terms_frequencies_mapping import get_collection_probability_for_term
-from dataaccess.constants import COLLECTION_TOTAL_WORDS, COLLECTION_DOCUMENTS_NUMBER
+from documentretrieval.data_constants import COLLECTION_DOCUMENTS_NUMBER, COLLECTION_TOTAL_WORDS
 
 MU = COLLECTION_TOTAL_WORDS / COLLECTION_DOCUMENTS_NUMBER  # estimate of the average doc length, ~50 for these docs
 
