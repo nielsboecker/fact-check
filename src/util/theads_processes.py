@@ -2,10 +2,10 @@ from multiprocessing import cpu_count, Pool
 from multiprocessing.pool import ThreadPool
 
 
-def get_process_pool():
+def get_process_pool(cores: int = cpu_count() - 1):
     # Process in multiple blocking processes
-    print(('Detected {} CPUs'.format(cpu_count())))
-    pool = Pool(processes=cpu_count()-1)
+    print(('Using {} CPUs'.format(cores)))
+    pool = Pool(cores)
     return pool
 
 

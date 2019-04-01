@@ -1,4 +1,5 @@
 import argparse
+import os
 from itertools import chain
 
 import numpy as np
@@ -17,6 +18,7 @@ from util.vector_algebra import get_min_max_vectors
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='don\'t load GloVe embeddings, use fake vectors', action='store_true')
 parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev'], default='train')
+parser.add_argument('--file', type=str, help='use this file (overrides dataset)')
 args = parser.parse_args()
 
 PREPROCESSED_DATA_COLUMNS = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']
@@ -92,7 +94,12 @@ def preprocess_claim_with_doc(claim_with_docs: tuple) -> list:
 
 if __name__ == '__main__':
     in_path = None
-    if args.dataset == 'train':
+
+    if args.file:
+      in_path = args.file
+
+    # overriden from args.file
+    elif args.dataset == 'train':
         in_path = './submission/retrieved_train/Q3_laplace_lindstone_0.01.csv'
     elif args.dataset == 'train_all':
         in_path = './submission/retrieved_train/Q3_laplace_lindstone_0.01_10000_claims.csv'
@@ -112,4 +119,6 @@ if __name__ == '__main__':
     training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
     output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
         else GENERATED_PREPROCESSED_DEV_DATA
+    if args.file:
+        output_path += os.path.basename(args.file)
     write_pickle(output_path, training_data)
