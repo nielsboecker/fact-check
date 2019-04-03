@@ -37,3 +37,6 @@ class WikiLine:
         self.id = id
         self.text = text
         self.anchors = anchors
+
+    def __str__(self):
+        return self.text
