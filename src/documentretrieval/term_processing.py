@@ -7,12 +7,16 @@ nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
 
-def preprocess_article(article: str) -> str:
-    return article.replace('-LRB-', '').replace('-RRB-', '')  # TODO: should also contain -COLON-, -LSB-, -RSB-
+def DEPRECATED_preprocess_article(article: str) -> str:
+    return article.replace('-LRB-', '').replace('-RRB-', '')
 
 
-def tokenise_article(article: str) -> list:
-    return re.split(r'\s+|-', article)
+def preprocess_doc_text(text: str) -> str:
+    return re.sub(r'(-LRB-|-RRB-|-LSB-|-RSB-|-COLON-) ', '', text)
+
+
+def tokenise_doc_text(text: str) -> list:
+    return re.split(r'\s+|-', text)
 
 
 def filter_tokens(tokens: list) -> list:
@@ -23,12 +27,12 @@ def filter_tokens(tokens: list) -> list:
     return list(filtered_tokens)
 
 
-def normalise_article(article):
-    return article.lower()
+def normalise_doc_text(text: str):
+    return text.lower()
 
 
-def process_normalise_tokenise_filter(raw_article: str) -> list:
-    article = preprocess_article(raw_article)
-    normalised_article = normalise_article(article)
-    all_tokens = tokenise_article(normalised_article)
+def process_normalise_tokenise_filter(raw_text: str) -> list:
+    preprocessed_text = preprocess_doc_text(raw_text)
+    normalised_article = normalise_doc_text(preprocessed_text)
+    all_tokens = tokenise_doc_text(normalised_article)
     return filter_tokens(all_tokens)
