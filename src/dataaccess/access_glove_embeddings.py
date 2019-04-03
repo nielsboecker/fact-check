@@ -34,5 +34,5 @@ def get_embedding(term: str, debug: bool = False) -> np.array:
     if term in model:
         return model[term]
     else:
-        print('Encountered Out-of-Vocabulary term: {}'.format(term))
+        # print('Encountered Out-of-Vocabulary term: {}'.format(term))
         return get_unknown()

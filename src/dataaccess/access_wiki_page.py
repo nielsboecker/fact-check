@@ -32,7 +32,7 @@ def get_random_wiki_page() -> WikiDocument:
 def get_random_wiki_line() -> WikiLine:
     wiki_page = get_random_wiki_page()
     random_line = random.choice(wiki_page.lines)
-    if not random_line:
+    if not random_line.text:
         # chose one of the empty lines that are in the dataset, try atain
         return get_random_wiki_line()
     return random_line

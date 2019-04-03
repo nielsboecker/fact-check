@@ -53,7 +53,7 @@ def transform_input(claim_text: str, line_text: str):
 
 def get_irrelevant_line(wiki_page: WikiDocument, relevant_line_ids: list) -> WikiLine:
     candidate_ids = list(range(len(wiki_page.lines)))
-    candidate_ids = [line for line in candidate_ids if line not in relevant_line_ids]
+    candidate_ids = [line_id for line_id in candidate_ids if line_id not in relevant_line_ids]
 
     if not candidate_ids:
         # if all sentences in this wiki page are relevant, return random line from other page
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     if args.debug:
         claims_and_retrieved_docs = claims_and_retrieved_docs.head(n=2)
 
-    pool = get_process_pool(cores=10)
+    pool = get_process_pool(cores=14)
 
 #    # 10,000 claims + sentences too much to keep in memory at once
 #    if args.dataset.endswith('all') or (args.file and args.file.endswith('all')):
