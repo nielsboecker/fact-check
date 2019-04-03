@@ -3,7 +3,7 @@ import time
 import numpy as np
 from numpy import ndarray
 
-from model.logistic_regression import LogisticRegressionModel, sigmoid, prepend_intercept
+from model.logistic_regression import LogisticRegressionModel, relu, prepend_intercept
 
 NUM_EPOCHS = 100000
 LEARNING_RATE = 0.01
@@ -36,7 +36,7 @@ def fit_and_get_model(in_values: ndarray, out_expected: ndarray, debug: bool = F
     # iteratively improve weights to fit expected output better
     for i in range(NUM_EPOCHS):
         lin_regression = np.dot(in_values, weights)
-        hypothesis = sigmoid(lin_regression)
+        hypothesis = relu(lin_regression)
 
         difference = hypothesis - out_expected
         gradient = np.dot(in_values.transpose(), difference) / num_of_datapoints

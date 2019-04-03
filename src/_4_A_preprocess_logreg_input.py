@@ -112,7 +112,7 @@ if __name__ == '__main__':
     pool = get_process_pool()
 
     # 10,000 claims + sentences too much to keep in memory at once
-    if args.dataset.endswith('all') or args.file.endswith('all'):
+    if args.dataset.endswith('all') or (args.file and args.file.endswith('all')):
         print('batch processing data')
         claims_split = np.array_split(claims_and_retrieved_docs, 20)
         for i, batch in enumerate(claims_split):

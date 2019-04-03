@@ -18,6 +18,11 @@ class LogisticRegressionModel:
         return self.get_probabilities(in_values) >= threshold
 
 
+def relu(values: ndarray) -> ndarray:
+    return np.maximum(values, 0)
+
+
+
 def sigmoid(values: ndarray) -> ndarray:
     return 1 / (1 + np.exp(-values))
 

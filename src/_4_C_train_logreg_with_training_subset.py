@@ -3,10 +3,11 @@ import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from _4_B_logistic_regression import fit_and_get_model, LOSS_HISTORY_FREQUENCY
-from model.logistic_regression import LogisticRegressionModel
-from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_LOGISTIC_REGRESSION_MODEL
+from _4_B_fit_logistic_regression_model import fit_and_get_model, LOSS_HISTORY_FREQUENCY
+from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_LOGISTIC_REGRESSION_MODEL, \
+    GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY
 from dataaccess.files_io import read_pickle, write_pickle
+from model.logistic_regression import LogisticRegressionModel
 from util.logreg_preprocessing import extract_input_and_expected
 from util.plots import show_plot_and_save_figure, prepare_seaborn_plots
 
@@ -32,6 +33,7 @@ if __name__ == '__main__':
     train_input, train_expected = extract_input_and_expected(training_data)
 
     model, loss_values = fit_and_get_model(train_input, train_expected, args.debug)
+    write_pickle(GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY, loss_values) # for plotting
     write_pickle(GENERATED_LOGISTIC_REGRESSION_MODEL, model)
 
     plot_loss_values(model, loss_values)
