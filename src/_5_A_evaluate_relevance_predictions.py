@@ -1,11 +1,17 @@
+import argparse
+
 import numpy as np
 from termcolor import colored
 
-from model.logistic_regression import LogisticRegressionModel
 from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import read_pickle
+from model.logistic_regression import LogisticRegressionModel
 from util.evaluation import get_true_positive, get_false_positive, get_false_negative, get_baserate_predictions
 from util.logreg_preprocessing import extract_input_and_expected
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--bias_corrected", help="use bias correction (King and Zeng, 2001)", action="store_true")
+args = parser.parse_args()
 
 
 def get_precision(predicted: np.ndarray, actual: np.ndarray) -> float:
@@ -37,7 +43,7 @@ if __name__ == '__main__':
     dev_data = read_pickle(GENERATED_PREPROCESSED_DEV_DATA)
     dev_input, dev_expected = extract_input_and_expected(dev_data)
 
-    model_prediction = model.get_predictions(dev_input)
+    model_prediction = model.get_predictions(dev_input, args.bias_corrected)
     model_precision = get_precision(model_prediction, dev_expected)
     model_recall = get_recall(model_prediction, dev_expected)
     model_f1 = get_f1_score(model_prediction, dev_expected)

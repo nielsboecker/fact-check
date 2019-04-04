@@ -1,9 +1,15 @@
-from model.logistic_regression import LogisticRegressionModel
+import argparse
+
 from dataaccess.files_constants import GENERATED_PREPROCESSED_DEV_DATA, \
     GENERATED_LOGISTIC_REGRESSION_MODEL
 from dataaccess.files_io import read_pickle
+from model.logistic_regression import LogisticRegressionModel
 from util.evaluation import get_accuracy, get_baserate_predictions
 from util.logreg_preprocessing import extract_input_and_expected
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--bias_corrected", help="use bias correction (King and Zeng, 2001)", action="store_true")
+args = parser.parse_args()
 
 
 if __name__ == '__main__':
@@ -12,7 +18,7 @@ if __name__ == '__main__':
     dev_input, dev_expected = extract_input_and_expected(dev_data)
 
     prediction_threshold = .5
-    model_prediction = model.get_predictions(dev_input, threshold=prediction_threshold)
+    model_prediction = model.get_predictions(dev_input, prediction_threshold, args.bias_corrected)
     model_accuracy = get_accuracy(model_prediction, dev_expected)
 
     baserate_zeros_prediction = get_baserate_predictions(model_prediction)

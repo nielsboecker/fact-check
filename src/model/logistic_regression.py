@@ -14,8 +14,18 @@ class LogisticRegressionModel:
         hypothesis = sigmoid(lin_regression)
         return hypothesis
 
-    def get_predictions(self, in_values: ndarray, threshold: float = 0.5) -> ndarray:
+    def get_predictions(self, in_values: ndarray, threshold: float = 0.5, bias_corrected: bool = False) -> ndarray:
+        if bias_corrected:
+            self.run_bias_prior_correction()
         return self.get_probabilities(in_values) >= threshold
+
+    # refer to  gking.harvard.edu/files/gking/files/baby0s.pdf 
+    def run_bias_prior_correction(self, population_probability: float = 0.002, sample_probability: float = 0.5):
+        factor_1 = (1 - population_probability) / population_probability
+        factor_2 = sample_probability / (1 - sample_probability)
+        correction = np.log(factor_1 * factor_2)
+        self.weights -= correction
+
 
 
 def relu(values: ndarray) -> ndarray:
