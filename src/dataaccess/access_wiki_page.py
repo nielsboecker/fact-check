@@ -31,7 +31,12 @@ def retrieve_wiki_page(page_id: str) -> WikiDocument:
 
 def get_random_wiki_page() -> WikiDocument:
     page_id = wiki_page_mapping.sample(n=1).index[0]
-    return retrieve_wiki_page(page_id)
+    try:
+        return retrieve_wiki_page(page_id)
+    except ValueError:
+        # there are many broken documents in the dataset that cannot be parsed, like
+        # {"id": "1560_in_Spain", "text": "", "lines": ""}; in these cases, try again
+        return get_random_wiki_page()
 
 
 def get_random_wiki_line() -> WikiLine:
