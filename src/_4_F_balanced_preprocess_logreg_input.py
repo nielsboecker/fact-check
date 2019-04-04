@@ -18,7 +18,7 @@ from util.vector_algebra import get_min_max_vectors
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='don\'t load GloVe embeddings, use fake vectors', action='store_true')
-parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev'], default='train')
+parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev', 'dev_all'], default='train')
 parser.add_argument('--file', type=str, help='use this file (overrides dataset)')
 args = parser.parse_args()
 
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     elif args.dataset == 'dev':
         in_path = './submission/retrieved_dev/Q3_laplace_lindstone_0.01.csv'
     elif args.dataset == 'dev_all':
-        in_path = './submission/retrieved_dev/Q3_laplace_lindstone_0.01_10000_claims.csv.csv'
+        in_path = './submission/retrieved_dev/Q3_laplace_lindstone_0.01_10000_claims.csv'
 
     claims_and_retrieved_docs = pd.read_csv(in_path, delimiter=',', quotechar='|', header=0, index_col=0)
     if args.debug:
