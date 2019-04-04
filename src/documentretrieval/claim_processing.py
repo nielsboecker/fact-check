@@ -6,9 +6,14 @@ from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_io import write_list_to_oneline_csv
 
 
-def preprocess_text(claim: str) -> str:
+def add_padding_around_punctuation(text: str) -> str:
     # Add spaces around punctuation so that claims can be further processed like the text in wiki-pages
-    return re.sub(r'([.,!?;])', r' \1 ', claim)
+    return re.sub(r'([.,!?;])', r' \1 ', text)
+
+
+
+def preprocess_claim_text(claim: str) -> str:
+    return add_padding_around_punctuation(claim)
 
 
 def display_or_store_result(claim: str, claim_id: int, result_docs: list, dir_path: str, display_only: bool = False):

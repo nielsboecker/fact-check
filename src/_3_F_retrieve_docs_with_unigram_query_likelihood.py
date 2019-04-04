@@ -13,7 +13,7 @@ from dataaccess.access_claims import get_all_claims, get_claim_row
 from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.files_constants import DOCS_TO_RETRIEVE_PER_CLAIM, \
     RETRIEVED_PROBABILISTIC_DIRECTORY
-from documentretrieval.claim_processing import preprocess_text, display_or_store_result
+from documentretrieval.claim_processing import preprocess_claim_text, display_or_store_result
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
 
@@ -32,7 +32,7 @@ args = parser.parse_args()
 
 def retrieve_documents_for_claim(claim: str, claim_id: int):
     print(colored('Retrieving documents for claim [{}]: "{}"'.format(claim_id, claim), attrs=['bold']))
-    preprocessed_claim = preprocess_text(claim)
+    preprocessed_claim = preprocess_claim_text(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
 
     # only docs that appear in index for at least one claim term to be considered

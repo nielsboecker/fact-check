@@ -10,7 +10,7 @@ from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
-from documentretrieval.claim_processing import preprocess_text
+from documentretrieval.claim_processing import preprocess_claim_text
 from documentretrieval.term_processing import preprocess_doc_text
 from model.wiki_document import WikiDocument
 from util.theads_processes import get_process_pool
@@ -39,7 +39,7 @@ def create_feature_vector(claim_vector: np.array, line_vector: np.array) -> np.a
 
 def transform_input(claim_text: str, line_text: str):
     # remove punctuation that are otherwise part of tokens
-    preprocessed_claim = preprocess_text(claim_text)
+    preprocessed_claim = preprocess_claim_text(claim_text)
     # remove artifacts like -LRB- etc.
     preprocessed_line = preprocess_doc_text(line_text)
 

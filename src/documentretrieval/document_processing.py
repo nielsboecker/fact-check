@@ -1,6 +1,6 @@
 import pandas as pd
 
-from documentretrieval.claim_processing import preprocess_text
+from documentretrieval.claim_processing import add_padding_around_punctuation
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 
 
@@ -17,5 +17,5 @@ def reduce_document_to_text_column(articles: pd.DataFrame) -> pd.DataFrame:
 
 
 def preprocess_doc_title(page_id: str) -> list:
-    doc_title_preprocessed = preprocess_text(page_id).replace('_', ' ')
+    doc_title_preprocessed = add_padding_around_punctuation(page_id).replace('_', ' ')
     return process_normalise_tokenise_filter(doc_title_preprocessed)

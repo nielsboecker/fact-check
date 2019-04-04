@@ -11,7 +11,7 @@ from dataaccess.access_inverted_index import get_candidate_documents_for_claim
 from dataaccess.access_words_idf_mapping import get_idf_for_term
 from dataaccess.files_constants import RETRIEVED_TFIDF_DIRECTORY, \
     DOCS_TO_RETRIEVE_PER_CLAIM
-from documentretrieval.claim_processing import preprocess_text, display_or_store_result
+from documentretrieval.claim_processing import preprocess_claim_text, display_or_store_result
 from documentretrieval.document_processing import preprocess_doc_title
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
@@ -117,7 +117,7 @@ def scoring_function(claim_terms: list,
 
 def retrieve_documents_for_claim(claim: str, claim_id: int):
     print(colored('Retrieving documents for claim [{}]: "{}"'.format(claim_id, claim), attrs=['bold']))
-    preprocessed_claim = preprocess_text(claim)
+    preprocessed_claim = preprocess_claim_text(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
     claim_vector = get_tfidf_vector_for_claim(claim_terms)
     claim_norm = get_tfidf_vector_norm(claim_terms, args.debug, args.variant)
