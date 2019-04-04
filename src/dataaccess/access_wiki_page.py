@@ -1,4 +1,5 @@
 import random
+import unicodedata
 
 import pandas as pd
 from termcolor import colored
@@ -11,6 +12,10 @@ wiki_page_mapping: pd.DataFrame = read_pickle(GENERATED_WIKI_PAGE_MAPPINGS_PATH)
 
 
 def retrieve_wiki_page(page_id: str) -> WikiDocument:
+    page_id = page_id.strip()
+    # account for some special cases, like u'Beyonce\u0301' != 'Beyoncé'
+    page_id = unicodedata.normalize('NFC', page_id)
+
     # Find correct batch file and read only relevant line
     batch_id, line = wiki_page_mapping.loc[page_id].values
     wiki_batch_path = get_wiki_batch_path(batch_id)

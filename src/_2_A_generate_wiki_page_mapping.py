@@ -1,5 +1,6 @@
 import argparse
 import time
+import unicodedata
 
 import pandas as pd
 
@@ -19,6 +20,8 @@ def generate_batch_mappings(batch_id: int):
     batch_df = read_jsonl_and_map_to_df(batch_file_path, ['id'])
     for line_index, row in batch_df.iterrows():
         page_id = row[0]
+        # account for some special cases, like u'Beyonce\u0301' != 'Beyoncé'
+        page_id = unicodedata.normalize('NFC', page_id)
         parital_result[page_id] = (batch_id, line_index)
 
     return parital_result
@@ -36,7 +39,7 @@ def generate_all_mappings():
     accumulated_mappings = {}
 
     for partial_result in partial_mappings:
-            accumulated_mappings.update(partial_result)
+        accumulated_mappings.update(partial_result)
 
     mapping = pd.DataFrame.from_dict(accumulated_mappings, orient='index', columns=['batch_id', 'line'])
     print(mapping.head())
