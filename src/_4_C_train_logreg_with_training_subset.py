@@ -13,6 +13,8 @@ from util.plots import show_plot_and_save_figure, prepare_seaborn_plots
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='use less data and less learning iterations', action='store_true')
+parser.add_argument('--num_epochs', type=int, default=100000)
+parser.add_argument('--learning_rate', type=float, default=0.01)
 args = parser.parse_args()
 
 
@@ -32,8 +34,8 @@ if __name__ == '__main__':
     # use DataFrame.values to unpack the ndarrays in each cell
     train_input, train_expected = extract_input_and_expected(training_data)
 
-    model, loss_values = fit_and_get_model(train_input, train_expected, args.debug)
-    write_pickle(GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY, loss_values) # for plotting
+    model, loss_values = fit_and_get_model(train_input, train_expected, args.num_epochs, args.learning_rate)
+    write_pickle(GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY, loss_values)  # for plotting
     write_pickle(GENERATED_LOGISTIC_REGRESSION_MODEL, model)
 
     plot_loss_values(model, loss_values)

@@ -3,19 +3,16 @@ import time
 import numpy as np
 from numpy import ndarray
 
-from model.logistic_regression import LogisticRegressionModel, relu, prepend_intercept
+from model.logistic_regression import LogisticRegressionModel, sigmoid, prepend_intercept
 
-NUM_EPOCHS = 100000
-LEARNING_RATE = 0.01
 LOSS_HISTORY_FREQUENCY = 500
 
 
-def get_loss(hypothesis: ndarray, actual: ndarray) -> float: # TODO
+def get_loss(hypothesis: ndarray, actual: ndarray) -> float:
     return (-actual * np.log(hypothesis) - (1 - actual) * np.log(1 - hypothesis)).mean()
 
 
-def fit_and_get_model(in_values: ndarray, out_expected: ndarray, debug: bool = False) -> tuple:
-    global NUM_EPOCHS, LEARNING_RATE
+def fit_and_get_model(in_values: ndarray, out_expected: ndarray, num_epochs: int, learning_rate: float) -> tuple:
     start_time = time.time()
     print('Start logistic regression fitting')
 
@@ -30,23 +27,22 @@ def fit_and_get_model(in_values: ndarray, out_expected: ndarray, debug: bool = F
     # keep track of loss values to verify learning
     loss_values = []
 
-    if (debug):
-        NUM_EPOCHS = 1000
-
     # iteratively improve weights to fit expected output better
-    for i in range(NUM_EPOCHS):
+    for i in range(num_epochs):
         lin_regression = np.dot(in_values, weights)
-        hypothesis = relu(lin_regression)
+        hypothesis = sigmoid(lin_regression)
 
         difference = hypothesis - out_expected
         gradient = np.dot(in_values.transpose(), difference) / num_of_datapoints
-        weights -= LEARNING_RATE * gradient
+        weights -= learning_rate * gradient
 
         if i % LOSS_HISTORY_FREQUENCY == 0:
-            loss_values.append(get_loss(hypothesis, out_expected))
-        if i == NUM_EPOCHS - 1:
+            current_loss = get_loss(hypothesis, out_expected)
+            loss_values.append(current_loss)
+            print('Iteration #{}\tLoss: {:,}'.format(i, current_loss))
+        if i == num_epochs - 1:
             print('Final loss: {}'.format(get_loss(hypothesis, out_expected)))
 
     print('Finished fitting after {:.2f} seconds'.format(time.time() - start_time))
 
-    return LogisticRegressionModel(weights, NUM_EPOCHS, LEARNING_RATE), loss_values
+    return LogisticRegressionModel(weights, num_epochs, learning_rate), loss_values

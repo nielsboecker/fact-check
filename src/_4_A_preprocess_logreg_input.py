@@ -11,6 +11,7 @@ from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
 from documentretrieval.claim_processing import preprocess_text
+from documentretrieval.term_processing import preprocess_doc_text
 from model.wiki_document import WikiDocument
 from util.theads_processes import get_process_pool
 from util.vector_algebra import get_min_max_vectors
@@ -37,8 +38,14 @@ def create_feature_vector(claim_vector: np.array, line_vector: np.array) -> np.a
 
 
 def transform_input(claim_text: str, line_text: str):
-    claim_vector = transform_sentence_to_vector(claim_text)
-    line_vector = transform_sentence_to_vector(line_text)
+    # remove punctuation that are otherwise part of tokens
+    preprocessed_claim = preprocess_text(claim_text)
+    # remove artifacts like -LRB- etc.
+    preprocessed_line = preprocess_doc_text(line_text)
+
+    claim_vector = transform_sentence_to_vector(preprocessed_claim)
+    line_vector = transform_sentence_to_vector(preprocessed_line)
+
     feature_vector = create_feature_vector(claim_vector, line_vector)
     return feature_vector
 
@@ -77,7 +84,7 @@ def preprocess_claim_with_doc(claim_with_docs: tuple) -> list:
     if not claim_is_verifiable(claim_id, dataset=args.dataset):
         return []
 
-    claim = preprocess_text(get_claim(claim_id, dataset=args.dataset))
+    claim = get_claim(claim_id, dataset=args.dataset)
     evidence_map = get_evidence_page_line_map(claim_id)
 
     retrieved_doc_ids = set(claim_with_docs[1])
