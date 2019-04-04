@@ -15,10 +15,10 @@ def transform_LR_input(claim_text: str, line_text: str, debug: bool = False):
     claim_vector = transform_sentence_to_vector(preprocessed_claim, debug)
     line_vector = transform_sentence_to_vector(preprocessed_line, debug)
 
-    return create_LR_feature_vector(claim_vector, line_vector)
+    return get_vector_difference(claim_vector, line_vector)
 
 
-def create_LR_feature_vector(claim_vector: np.array, line_vector: np.array) -> np.array:
+def get_vector_difference(claim_vector: np.array, line_vector: np.array) -> np.array:
     return claim_vector - line_vector
 
 

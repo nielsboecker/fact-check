@@ -84,7 +84,7 @@ if __name__ == '__main__':
             print('Merging partial results...')
             preprocessed = list(chain.from_iterable(partial_results))
 
-            training_data = pd.DataFrame.from_records(preprocessed, PREPROCESSED_DATA_COLUMNS)
+            training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
             output_path = GENERATED_LR_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
                 else GENERATED_LR_PREPROCESSED_DEV_DATA
             output_path += str(i)
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         print('Merging partial results...')
         preprocessed = list(chain.from_iterable(partial_results))
 
-        training_data = pd.DataFrame.from_records(preprocessed, PREPROCESSED_DATA_COLUMNS)
+        training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
         output_path = GENERATED_LR_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
             else GENERATED_LR_PREPROCESSED_DEV_DATA
         if args.file:
