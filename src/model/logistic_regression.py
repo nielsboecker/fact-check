@@ -20,7 +20,7 @@ class LogisticRegressionModel:
         return self.get_probabilities(in_values) >= threshold
 
     # refer to  gking.harvard.edu/files/gking/files/baby0s.pdf 
-    def run_bias_prior_correction(self, population_probability: float = 0.002, sample_probability: float = 0.5):
+    def run_bias_prior_correction(self, population_probability: float = 10 / 14839, sample_probability: float = 0.5):
         factor_1 = (1 - population_probability) / population_probability
         factor_2 = sample_probability / (1 - sample_probability)
         correction = np.log(factor_1 * factor_2)

@@ -5,3 +5,6 @@ COLLECTION_TOTAL_WORDS = 271036237      # number of total words after filtering 
 
 # claims-specific data
 CLAIMS_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
+
+# intermediate data format
+PREPROCESSED_DATA_COLUMNS = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']

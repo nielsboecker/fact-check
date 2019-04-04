@@ -5,14 +5,16 @@ from itertools import chain
 import numpy as np
 import pandas as pd
 
-from dataaccess.access_claims import get_claim, get_claim_row, claim_is_verifiable
+from dataaccess.access_claims import get_claim, claim_is_verifiable
 from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_PREPROCESSED_DEV_DATA
+from dataaccess.files_constants import GENERATED_LR_PREPROCESSED_TRAINING_DATA, GENERATED_LR_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
 from documentretrieval.claim_processing import preprocess_claim_text
+from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS
 from documentretrieval.term_processing import preprocess_doc_text
 from model.wiki_document import WikiDocument
+from relevance.evidence_relevance import get_evidence_page_line_map, is_relevant
 from util.theads_processes import get_process_pool
 from util.vector_algebra import get_min_max_vectors
 
@@ -22,7 +24,6 @@ parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev']
 parser.add_argument('--file', type=str, help='use this file (overrides dataset)')
 args = parser.parse_args()
 
-PREPROCESSED_DATA_COLUMNS = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']
 
 def transform_sentence_to_vector(sentence: str):
     # Refer to https://arxiv.org/pdf/1607.00570.pdf
@@ -50,13 +51,6 @@ def transform_input(claim_text: str, line_text: str):
     return feature_vector
 
 
-def is_relevant(doc_id: str, line_id: int, evidence_map: dict) -> bool:
-    if doc_id in evidence_map:
-        return line_id in evidence_map[doc_id]
-    else:
-        return False
-
-
 def preprocess_doc(claim_id: int, claim: str, doc: WikiDocument, evidence_map: dict):
     preprocessed_lines = []
     for line in doc.lines:
@@ -69,14 +63,6 @@ def preprocess_doc(claim_id: int, claim: str, doc: WikiDocument, evidence_map: d
     return preprocessed_lines
 
 
-def get_evidence_page_line_map(claim_id: int) -> dict:
-    mapping = {}
-    evidence = get_claim_row(claim_id, dataset=args.dataset)['evidence'][0]
-    for _, _, page_id, line_id in evidence:
-        mapping.setdefault(page_id, []).append(line_id)
-    return mapping
-
-
 def preprocess_claim_with_doc(claim_with_docs: tuple) -> list:
     partial_result = []
     claim_id = claim_with_docs[0]
@@ -85,7 +71,7 @@ def preprocess_claim_with_doc(claim_with_docs: tuple) -> list:
         return []
 
     claim = get_claim(claim_id, dataset=args.dataset)
-    evidence_map = get_evidence_page_line_map(claim_id)
+    evidence_map = get_evidence_page_line_map(claim_id, args.dataset)
 
     retrieved_doc_ids = set(claim_with_docs[1])
     evidence_doc_ids = evidence_map.keys()
@@ -127,9 +113,9 @@ if __name__ == '__main__':
             print('Merging partial results...')
             preprocessed = list(chain.from_iterable(partial_results))
 
-            training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
-            output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
-                else GENERATED_PREPROCESSED_DEV_DATA
+            training_data = pd.DataFrame.from_records(preprocessed, PREPROCESSED_DATA_COLUMNS)
+            output_path = GENERATED_LR_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
+                else GENERATED_LR_PREPROCESSED_DEV_DATA
             output_path += str(i)
             write_pickle(output_path, training_data)
 
@@ -139,9 +125,9 @@ if __name__ == '__main__':
         print('Merging partial results...')
         preprocessed = list(chain.from_iterable(partial_results))
 
-        training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
-        output_path = GENERATED_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
-            else GENERATED_PREPROCESSED_DEV_DATA
+        training_data = pd.DataFrame.from_records(preprocessed, PREPROCESSED_DATA_COLUMNS)
+        output_path = GENERATED_LR_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
+            else GENERATED_LR_PREPROCESSED_DEV_DATA
         if args.file:
             output_path += os.path.basename(args.file)
         write_pickle(output_path, training_data)

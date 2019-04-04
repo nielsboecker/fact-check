@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.metrics import roc_auc_score, precision_recall_curve, auc, average_precision_score, roc_curve
 
-from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_PREPROCESSED_DEV_DATA
+from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_LR_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import read_pickle
 from model.logistic_regression import LogisticRegressionModel
 from util.evaluation import get_baserate_predictions, \
@@ -57,7 +57,7 @@ def plot_roc_auc_curve():
 
 if __name__ == '__main__':
     model: LogisticRegressionModel = read_pickle(GENERATED_LOGISTIC_REGRESSION_MODEL)
-    dev_data = read_pickle(GENERATED_PREPROCESSED_DEV_DATA)
+    dev_data = read_pickle(GENERATED_LR_PREPROCESSED_DEV_DATA)
     dev_input, dev_expected = extract_input_and_expected(dev_data)
 
     model_prediction = model.get_predictions(dev_input, args.bias_corrected)

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from _4_B_fit_logistic_regression_model import fit_and_get_model, LOSS_HISTORY_FREQUENCY
-from dataaccess.files_constants import GENERATED_PREPROCESSED_TRAINING_DATA, GENERATED_LOGISTIC_REGRESSION_MODEL, \
+from dataaccess.files_constants import GENERATED_LR_PREPROCESSED_TRAINING_DATA, GENERATED_LOGISTIC_REGRESSION_MODEL, \
     GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY
 from dataaccess.files_io import read_pickle, write_pickle
 from model.logistic_regression import LogisticRegressionModel
@@ -29,7 +29,7 @@ def plot_loss_values(model: LogisticRegressionModel, loss_values: list):
 
 
 if __name__ == '__main__':
-    training_data: pd.DataFrame = read_pickle(GENERATED_PREPROCESSED_TRAINING_DATA)
+    training_data: pd.DataFrame = read_pickle(GENERATED_LR_PREPROCESSED_TRAINING_DATA)
 
     # use DataFrame.values to unpack the ndarrays in each cell
     train_input, train_expected = extract_input_and_expected(training_data)
