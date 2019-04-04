@@ -1,52 +1,22 @@
 import argparse
 from itertools import chain
 
-import numpy as np
 import pandas as pd
 
 from dataaccess.access_claims import get_claim, claim_is_verifiable
-from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_constants import GENERATED_LR_PREPROCESSED_TRAINING_DATA, GENERATED_LR_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
-from documentretrieval.claim_processing import preprocess_claim_text
 from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS
-from documentretrieval.term_processing import preprocess_doc_text
+from relevance.embeddings import transform_LR_input
 from relevance.evidence_relevance import get_evidence_page_line_map, get_irrelevant_line
 from util.theads_processes import get_process_pool
-from util.vector_algebra import get_min_max_vectors
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='don\'t load GloVe embeddings, use fake vectors', action='store_true')
 parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev', 'dev_all'], default='train')
 parser.add_argument('--file', type=str, help='use this file (overrides dataset)')
 args = parser.parse_args()
-
-
-def transform_sentence_to_vector(sentence: str):
-    # Refer to https://arxiv.org/pdf/1607.00570.pdf
-    embeddings = [get_embedding(term, args.debug) for term in sentence.split()]
-    min_values, max_values = get_min_max_vectors(embeddings)
-    sentence_vector = np.concatenate((min_values, max_values), axis=0)
-    assert sentence_vector.shape == (600,)
-    return sentence_vector
-
-
-def create_feature_vector(claim_vector: np.array, line_vector: np.array) -> np.array:
-    return claim_vector - line_vector
-
-
-def transform_input(claim_text: str, line_text: str):
-    # remove punctuation that are otherwise part of tokens
-    preprocessed_claim = preprocess_claim_text(claim_text)
-    # remove artifacts like -LRB- etc.
-    preprocessed_line = preprocess_doc_text(line_text)
-
-    claim_vector = transform_sentence_to_vector(preprocessed_claim)
-    line_vector = transform_sentence_to_vector(preprocessed_line)
-
-    feature_vector = create_feature_vector(claim_vector, line_vector)
-    return feature_vector
 
 
 def preprocess_claim_with_doc(claim_with_docs: tuple) -> list:
@@ -65,12 +35,12 @@ def preprocess_claim_with_doc(claim_with_docs: tuple) -> list:
         for line_id in relevant_line_ids:
             # add the relevant claim/sentence pair...
             positive_line = wiki_page.lines[line_id]
-            positive_input = transform_input(claim, positive_line.text)
+            positive_input = transform_LR_input(claim, positive_line.text)
             preprocessed_pairs.append((claim_id, page_id, line_id, positive_input, 1))
 
             # ...and, to keep it balanced, one irrelevant sample
             negative_line = get_irrelevant_line(wiki_page, relevant_line_ids)
-            negative_input = transform_input(claim, negative_line.text)
+            negative_input = transform_LR_input(claim, negative_line.text)
             preprocessed_pairs.append((claim_id, page_id, negative_line.id, negative_input, 0))
 
     return preprocessed_pairs

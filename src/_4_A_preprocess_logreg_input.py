@@ -6,17 +6,14 @@ import numpy as np
 import pandas as pd
 
 from dataaccess.access_claims import get_claim, claim_is_verifiable
-from dataaccess.access_glove_embeddings import get_embedding
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_constants import GENERATED_LR_PREPROCESSED_TRAINING_DATA, GENERATED_LR_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
-from documentretrieval.claim_processing import preprocess_claim_text
 from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS
-from documentretrieval.term_processing import preprocess_doc_text
 from model.wiki_document import WikiDocument
+from relevance.embeddings import transform_LR_input
 from relevance.evidence_relevance import get_evidence_page_line_map, is_relevant
 from util.theads_processes import get_process_pool
-from util.vector_algebra import get_min_max_vectors
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='don\'t load GloVe embeddings, use fake vectors', action='store_true')
@@ -25,39 +22,13 @@ parser.add_argument('--file', type=str, help='use this file (overrides dataset)'
 args = parser.parse_args()
 
 
-def transform_sentence_to_vector(sentence: str):
-    # Refer to https://arxiv.org/pdf/1607.00570.pdf
-    embeddings = [get_embedding(term, args.debug) for term in sentence.split()]
-    min_values, max_values = get_min_max_vectors(embeddings)
-    sentence_vector = np.concatenate((min_values, max_values), axis=0)
-    assert sentence_vector.shape == (600,)
-    return sentence_vector
-
-
-def create_feature_vector(claim_vector: np.array, line_vector: np.array) -> np.array:
-    return claim_vector - line_vector
-
-
-def transform_input(claim_text: str, line_text: str):
-    # remove punctuation that are otherwise part of tokens
-    preprocessed_claim = preprocess_claim_text(claim_text)
-    # remove artifacts like -LRB- etc.
-    preprocessed_line = preprocess_doc_text(line_text)
-
-    claim_vector = transform_sentence_to_vector(preprocessed_claim)
-    line_vector = transform_sentence_to_vector(preprocessed_line)
-
-    feature_vector = create_feature_vector(claim_vector, line_vector)
-    return feature_vector
-
-
 def preprocess_doc(claim_id: int, claim: str, doc: WikiDocument, evidence_map: dict):
     preprocessed_lines = []
     for line in doc.lines:
         if not line.text:
             # Many docs in the FEVER dataset have empty lines
             continue
-        input = transform_input(claim, line.text)
+        input = transform_LR_input(claim, line.text, args.debug)
         output = 1 if is_relevant(doc.id, line.id, evidence_map) else 0
         preprocessed_lines.append((claim_id, doc.id, line.id, input, output))
     return preprocessed_lines

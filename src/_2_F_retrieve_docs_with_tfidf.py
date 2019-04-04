@@ -4,6 +4,7 @@ from collections import Counter
 from operator import itemgetter
 
 from termcolor import colored
+from util.vector_semantics import get_tfidf_vector_norm
 
 from dataaccess.access_claims import get_claim_row, get_all_claims
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc_text
@@ -15,7 +16,6 @@ from documentretrieval.claim_processing import preprocess_claim_text, display_or
 from documentretrieval.document_processing import preprocess_doc_title
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
-from util.vector_semantics import get_tfidf_vector_norm
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
@@ -89,7 +89,7 @@ def get_claim_doc_title_cosine_similarity(claim_terms: list,
     # Use only terms from title, discard doc text
     term_counts = dict(Counter(doc_title_terms))
     doc_title_vector = get_tfidf_vector_for_document(term_counts, claim_terms)
-    doc_title_norm = get_tfidf_vector_norm(doc_title_terms, args.debug, args.variant)
+    doc_title_norm = get_tfidf_vector_norm(doc_title_terms, args.variant)
 
     dot_product = get_doc_product(claim_vector, doc_title_vector)
     norms_product = claim_norm * doc_title_norm
@@ -120,7 +120,7 @@ def retrieve_documents_for_claim(claim: str, claim_id: int):
     preprocessed_claim = preprocess_claim_text(claim)
     claim_terms = process_normalise_tokenise_filter(preprocessed_claim)
     claim_vector = get_tfidf_vector_for_claim(claim_terms)
-    claim_norm = get_tfidf_vector_norm(claim_terms, args.debug, args.variant)
+    claim_norm = get_tfidf_vector_norm(claim_terms, args.variant)
 
     # only docs that appear in index for at least one claim term to be considered
     doc_candidates = get_candidate_documents_for_claim(claim_terms)

@@ -4,7 +4,7 @@ from collections import Counter
 from dataaccess.access_words_idf_mapping import get_idf_for_term
 
 
-def get_tfidf_vector_norm(text: list, debug=False, variant='relative'):
+def get_tfidf_vector_norm(text: list, variant='relative'):
     # Note: this takes the TF directly from the text argument and IDF from doc -> IDF mapping
     word_count = Counter(text)
     accumulated_tfidf_values_for_words = []
@@ -15,6 +15,4 @@ def get_tfidf_vector_norm(text: list, debug=False, variant='relative'):
         accumulated_tfidf_values_for_words.append(tfidf_value)
     norm = math.sqrt(sum([i ** 2 for i in accumulated_tfidf_values_for_words]))
 
-    # if (debug):
-    #     print('Computed norm {} for doc \n{}'.format(norm, text))
     return norm

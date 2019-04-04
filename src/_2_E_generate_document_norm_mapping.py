@@ -1,12 +1,13 @@
 import argparse
 import time
 
+from util.vector_semantics import get_tfidf_vector_norm
+
 from dataaccess.files_constants import GENERATED_DOCUMENT_NORMS_MAPPING, get_wiki_batch_path
 from dataaccess.files_io import read_jsonl_and_map_to_df, write_dict_to_jsonl
 from documentretrieval.document_processing import filter_documents
 from documentretrieval.term_processing import process_normalise_tokenise_filter
 from util.theads_processes import get_process_pool
-from util.vector_semantics import get_tfidf_vector_norm
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--debug", help="only use subset of data", action="store_true")
@@ -26,7 +27,7 @@ def generate_document_norm_mapping_for_batch(batch_id: int) -> dict:
     for raw_doc_row in filtered_articles.iterrows():
         page_id = raw_doc_row[1]['id']
         filtered_tokens = process_normalise_tokenise_filter(raw_doc_row[1]['text'])
-        doc_norm = get_tfidf_vector_norm(filtered_tokens, args.debug, args.variant)
+        doc_norm = get_tfidf_vector_norm(filtered_tokens, args.variant)
         partial_document_norm_mappings[page_id] = doc_norm
 
     return partial_document_norm_mappings
