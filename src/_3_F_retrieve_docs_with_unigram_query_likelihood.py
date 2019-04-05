@@ -24,7 +24,7 @@ parser.add_argument('--remove_zero_likelihood', help='if documents yield query l
                     action='store_true')
 parser.add_argument('--id', help='ID of a claim to retrieve for test purposes (if defined, process only this one)',
                     type=int)
-parser.add_argument('--dataset', choices=['train', 'dev'], type=str, default='train')
+parser.add_argument('--dataset', choices=['train', 'dev', 'test'], type=str, default='train')
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
 args = parser.parse_args()
@@ -83,7 +83,7 @@ def retrieve_documents_for_all_claims():
 
 if __name__ == '__main__':
     start_time = time.time()
-    if (args.id):
+    if args.id:
         claim = get_claim_row(args.id, dataset=args.dataset)
         document = retrieve_documents_for_claim_row((None, claim))
     else:

@@ -4,7 +4,6 @@ from collections import Counter
 from operator import itemgetter
 
 from termcolor import colored
-from util.vector_semantics import get_tfidf_vector_norm
 
 from dataaccess.access_claims import get_claim_row, get_all_claims
 from dataaccess.access_docs_norms_mapping import get_norm_for_doc_text
@@ -15,12 +14,13 @@ from dataaccess.files_constants import RETRIEVED_TFIDF_DIRECTORY, \
 from documentretrieval.claim_processing import preprocess_claim_text, display_or_store_result
 from documentretrieval.document_processing import preprocess_doc_title
 from documentretrieval.term_processing import process_normalise_tokenise_filter
+from documentretrieval.vector_semantics import get_tfidf_vector_norm
 from util.theads_processes import get_process_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--variant', help='TF weighting variant', choices=['raw_count', 'relative'], default='relative')
 parser.add_argument('--doc_title', help='[0...1] weight of doc title vs. doc text', type=float, default=0.)
-parser.add_argument('--dataset', choices=['train', 'dev'], type=str, default='train')
+parser.add_argument('--dataset', choices=['train', 'dev', 'test'], type=str, default='train')
 parser.add_argument('--id', help='process only this ID of a claim to retrieve for test purposes', type=int)
 parser.add_argument('--limit', help='only use subset for the first 10 claims', action='store_true')
 parser.add_argument('--print', help='print results rather than storing on disk', action='store_true')
