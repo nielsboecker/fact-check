@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script should run once, it will download required data in /data directory
+
 # Supposed to be run from root project directory
 mkdir -p data
 cd data

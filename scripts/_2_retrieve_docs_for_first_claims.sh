@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This script can be used to retrieve documents with multiple retrieval approaches
+# one after the other. The first argument specifies which dataset to use. If it is
+# not adjusted, it will only work with the top 15 claims (due to --limit flag).
+
 DATASET=$1
 
 python3 src/_2_F_retrieve_docs_with_tfidf.py --dataset ${DATASET} --limit
