@@ -1,7 +1,6 @@
 import argparse
 
-from dataaccess.files_constants import GENERATED_LR_PREPROCESSED_DEV_DATA, \
-    GENERATED_LOGISTIC_REGRESSION_MODEL
+from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_NN_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import read_pickle
 from model.logistic_regression import LogisticRegressionModel
 from util.evaluation import get_accuracy, get_baserate_predictions
@@ -14,7 +13,7 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     model: LogisticRegressionModel = read_pickle(GENERATED_LOGISTIC_REGRESSION_MODEL)
-    dev_data = read_pickle(GENERATED_LR_PREPROCESSED_DEV_DATA)
+    dev_data = read_pickle(GENERATED_NN_PREPROCESSED_DEV_DATA)
     dev_input, dev_expected = extract_input_and_expected(dev_data)
 
     prediction_threshold = .5
