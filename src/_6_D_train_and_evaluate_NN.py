@@ -97,12 +97,9 @@ for epoch in range(args.num_epochs):
         #if iter % loss_history_frequency == 0:
         if (i + 1) % loss_history_frequency == 0:
             print('Iteration: {}/{}\tEpoch: {}/{}\t|\tLoss: {:.5f}'
-                  .format(i + 1, num_iterations, epoch, args.num_epochs, loss.item()))
+                  .format(i + 1, num_iterations, epoch + 1, args.num_epochs, loss.item()))
             loss_history.append(loss.item())
 
-        #if i == num_iterations - 1:
-            #'Final accuracy on dev set: '
-            #acc = get_accuracy(predicted)
 
 print('Done with training...')
 
@@ -119,11 +116,11 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-    print('Accuracy on dev subset: {:.5f} %'.format(correct / total))
+    print('Accuracy on dev subset: {:.5f}.'.format(correct / total))
 
 # save results
 write_pickle(GENERATED_NEURAL_NETWORK_MODEL.format(args.preprocessed_format), model)
 write_pickle(GENERATED_NEURAL_NETWORK_LOSS_HISTORY.format(args.preprocessed_format), loss_history)
 
 # plot loss history
-plot_loss_values(num_iterations, args.learning_rate, loss_history, loss_history_frequency)
+plot_loss_values(num_iterations * args.num_epochs, args.learning_rate, loss_history, loss_history_frequency)

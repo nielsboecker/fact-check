@@ -43,9 +43,9 @@ class DeepFeedForwardNeuralNetworkModel(nn.Module):
         self.fully_connected_3 = nn.Linear(hidden_dimension, hidden_dimension)
 
         # readout
-        self.fully_connected_4 = nn.Linear(input_dimension, output_dimension)
+        self.fully_connected_4 = nn.Linear(hidden_dimension, output_dimension)
 
-        # Non linearity
+        # non linearity
         if non_linearity == 'relu':
             self.non_linearity_1 = nn.ReLU()
             self.non_linearity_2 = nn.ReLU()
@@ -57,8 +57,6 @@ class DeepFeedForwardNeuralNetworkModel(nn.Module):
         else:
             raise NotImplementedError
 
-        # Readout linear function
-        self.fully_connected_2 = nn.Linear(hidden_dimension, output_dimension)
 
     def forward(self, input):
         out = self.fully_connected_1(input)

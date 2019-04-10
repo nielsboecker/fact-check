@@ -27,5 +27,5 @@ def plot_loss_values(num_iterations: int, learning_rate: float, loss_values: lis
     plt.ylabel('Cross-Entropy Loss')
     plt.figtext(0.65, 0.8, r'$n = {:,}$'.format(num_iterations))
     plt.figtext(0.65, 0.75, r'$\alpha = {:,}$'.format(learning_rate))
-    plt.plot([i * step for i in range(len(loss_values))], loss_values, linewidth=4)
+    plt.plot([i * step for i in range(len(loss_values))], loss_values, linewidth=2)
     show_plot_and_save_figure('logistic_regression_loss_values.png')
