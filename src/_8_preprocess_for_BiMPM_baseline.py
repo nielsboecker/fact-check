@@ -13,7 +13,6 @@ from util.theads_processes import get_process_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='only use subset of data', action='store_true')
-parser.add_argument('--cores', type=int, default=2, help='cores to run on')
 parser.add_argument('--dataset', type=str, choices=['train', 'dev'], default='train')
 args = parser.parse_args()
 
@@ -49,7 +48,7 @@ if __name__ == '__main__':
     if args.debug:
         training_data = training_data.head(n=5)
 
-    pool = get_process_pool(args.cores)
+    pool = get_process_pool()
     partial_results = pool.map(preprocess_claim, training_data.iterrows())
     print('Merging partial results...')
     preprocessed = list(chain.from_iterable(partial_results))
