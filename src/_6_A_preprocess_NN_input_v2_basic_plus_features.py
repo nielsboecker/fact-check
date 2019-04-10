@@ -19,7 +19,7 @@ from util.theads_processes import get_process_pool
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='only use subset of data', action='store_true')
 parser.add_argument('--cores', type=int, default=None, help='Limit number of cores (optional)')
-parser.add_argument('--dataset', type=str, choices=['train_all', 'dev_all'], default='train_all')
+parser.add_argument('--dataset', type=str, choices=['train', 'dev', 'test'], required=True)
 args = parser.parse_args()
 
 

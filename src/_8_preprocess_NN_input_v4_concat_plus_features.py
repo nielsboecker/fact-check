@@ -18,7 +18,7 @@ from util.theads_processes import get_process_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='only use subset of data', action='store_true')
-parser.add_argument('--cores', type=int, defult=None, help='Limit number of cores (optional)')
+parser.add_argument('--cores', type=int, default=None, help='Limit number of cores (optional)')
 parser.add_argument('--dataset', type=str, choices=['train', 'dev', 'test'], required=True)
 args = parser.parse_args()
 
@@ -101,5 +101,5 @@ if __name__ == '__main__':
     preprocessed = list(chain.from_iterable(partial_results))
 
     preprocessed_df = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS_V2)
-    output_path = GENERATED_NN_PREPROCESSED_DATA.format(args.dataset, 'v3')
+    output_path = GENERATED_NN_PREPROCESSED_DATA.format(args.dataset, 'v4')
     write_pickle(output_path, preprocessed_df)
