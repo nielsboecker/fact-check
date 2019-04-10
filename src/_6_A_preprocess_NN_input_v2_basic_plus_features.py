@@ -6,10 +6,10 @@ import pandas as pd
 
 from dataaccess.access_claims import get_all_claims
 from dataaccess.access_wiki_page import retrieve_wiki_page
-from dataaccess.files_constants import GENERATED_NN_PREPROCESSED_TRAINING_DATA, GENERATED_NN_PREPROCESSED_DEV_DATA
+from dataaccess.files_constants import GENERATED_NN_PREPROCESSED_DATA
 from dataaccess.files_io import write_pickle
 from documentretrieval.claim_processing import preprocess_claim_text
-from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS
+from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS_V1
 from documentretrieval.document_processing import preprocess_doc_title
 from documentretrieval.term_processing import preprocess_doc_text
 from relevance.embeddings import transform_sentence_to_vector, get_vector_difference
@@ -87,7 +87,6 @@ if __name__ == '__main__':
     print('Merging partial results...')
     preprocessed = list(chain.from_iterable(partial_results))
 
-    preprocessed_df = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
-    output_path = GENERATED_NN_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
-        else GENERATED_NN_PREPROCESSED_DEV_DATA
+    preprocessed_df = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS_V1)
+    output_path = GENERATED_NN_PREPROCESSED_DATA.format(args.dataset, 'v2')
     write_pickle(output_path, preprocessed_df)
