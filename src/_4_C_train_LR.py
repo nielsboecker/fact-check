@@ -2,7 +2,7 @@ import argparse
 
 import pandas as pd
 
-from _4_B_fit_logistic_regression_model import fit_and_get_model, LOSS_HISTORY_FREQUENCY
+from _4_B_fit_LR_model import fit_and_get_model, LOSS_HISTORY_FREQUENCY
 from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, \
     GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY, GENERATED_NN_PREPROCESSED_TRAINING_DATA
 from dataaccess.files_io import read_pickle, write_pickle

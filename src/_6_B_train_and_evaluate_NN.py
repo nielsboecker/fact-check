@@ -108,6 +108,7 @@ for epoch in range(args.num_epochs):
 print('Done with training...')
 
 # test result
+# note: equivalent logic to util.evaluation.get_accuracy(), but optimised for pytorch
 with torch.no_grad():
     correct = 0
     total = 0

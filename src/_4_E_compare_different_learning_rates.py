@@ -2,7 +2,7 @@ import argparse
 
 import matplotlib.pyplot as plt
 
-from _4_B_fit_logistic_regression_model import LOSS_HISTORY_FREQUENCY
+from _4_B_fit_LR_model import LOSS_HISTORY_FREQUENCY
 from dataaccess.files_io import read_pickle
 from util.plots import show_plot_and_save_figure, prepare_seaborn_plots
 
