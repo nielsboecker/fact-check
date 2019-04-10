@@ -7,7 +7,7 @@ from dataaccess.access_claims import get_claim, claim_is_verifiable
 from dataaccess.access_wiki_page import retrieve_wiki_page
 from dataaccess.files_constants import GENERATED_LR_PREPROCESSED_TRAINING_DATA, GENERATED_LR_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import write_pickle
-from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS
+from documentretrieval.data_constants import PREPROCESSED_DATA_COLUMNS_V1
 from relevance.embeddings import transform_LR_input
 from relevance.evidence_relevance import get_evidence_page_line_map, get_irrelevant_line
 from util.theads_processes import get_process_pool
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     print('Merging partial results...')
     preprocessed = list(chain.from_iterable(partial_results))
 
-    training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS)
+    training_data = pd.DataFrame.from_records(preprocessed, columns=PREPROCESSED_DATA_COLUMNS_V1)
     output_path = GENERATED_LR_PREPROCESSED_TRAINING_DATA if args.dataset.startswith('train') \
         else GENERATED_LR_PREPROCESSED_DEV_DATA
 #    if args.file:

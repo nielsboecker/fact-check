@@ -8,4 +8,5 @@ CLAIMS_COLUMNS_LABELED = ['id', 'verifiable', 'label', 'claim', 'evidence']
 CLAIMS_COLUMNS_UNLABELED = ['id', 'claim']
 
 # intermediate data format
-PREPROCESSED_DATA_COLUMNS = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']
+PREPROCESSED_DATA_COLUMNS_V1 = ['claim_id', 'page_id', 'line_id', 'input_vector', 'expected_output']
+PREPROCESSED_DATA_COLUMNS_V2 = ['claim_id', 'input_vector', 'expected_output']
