@@ -3,6 +3,7 @@
 # Clone my BiMPM fork incl. parse error fix
 git clone git@github.com:nbckr/BiMPM.git
 cd BiMPM
+git checkout patch-1
 
 mkdir -p data
 cd data

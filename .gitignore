@@ -4,6 +4,7 @@ data/*
 # output files
 generated/*
 retrieved/*
+BiMPM/*
 
 # IntelliJ
 *.iml
