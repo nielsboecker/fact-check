@@ -7,7 +7,7 @@ from util.logreg_preprocessing import extract_input_and_expected
 
 
 class FeverClaimsDataset(Dataset):
-    def __init__(self, preprocessed_pickle_path: str, debug: bool = False):
+    def __init__(self, preprocessed_pickle_path: str):
         preprocessed_dataset: pd.DataFrame = read_pickle(preprocessed_pickle_path)
         inputs, labels = extract_input_and_expected(preprocessed_dataset)
         self.inputs = inputs
