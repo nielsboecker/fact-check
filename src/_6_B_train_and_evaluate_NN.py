@@ -44,9 +44,9 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            shuffle=True)
 
 test_dataset = FeverClaimsDataset(GENERATED_NN_PREPROCESSED_DEV_DATA)
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
-                                          batch_size=args.batch_size,
-                                          shuffle=False)
+dev_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                         batch_size=args.batch_size,
+                                         shuffle=False)
 
 # predicting one of two labels (supports / refutes)
 output_dimension = 2
@@ -78,6 +78,9 @@ for epoch in range(args.num_epochs):
 
         input_var = Variable(inputs).to(args.device) #todo
         labels_var = Variable(labels).to(args.device)
+
+        print(input_var.shape())
+        print(labels_var.shape())
 
         # clear gradients
         optimiser.zero_grad()
@@ -112,7 +115,7 @@ print('Done with training...')
 with torch.no_grad():
     correct = 0
     total = 0
-    for inputs, labels in test_loader:
+    for inputs, labels in dev_loader:
         inputs = inputs.to(args.device)
         labels = labels.to(args.device)
         outputs = model(inputs)

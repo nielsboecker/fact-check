@@ -63,7 +63,7 @@ def preprocess_claim(claim_row: pd.Series) -> list:
 if __name__ == '__main__':
     training_data = get_all_claims(args.dataset)
     if args.debug:
-        training_data = training_data.head(n=3)
+        training_data = training_data.head(n=5)
 
     pool = get_process_pool(args.cores)
     partial_results = pool.map(preprocess_claim, training_data.iterrows())
