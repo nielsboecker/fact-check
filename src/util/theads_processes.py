@@ -3,7 +3,8 @@ from multiprocessing.pool import ThreadPool
 
 
 def get_process_pool(cores: int = cpu_count() - 1):
-    # Process in multiple blocking processes
+    if not cores:
+        cores = cpu_count() - 1
     print(('Using {} CPUs'.format(cores)))
     pool = Pool(cores)
     return pool
