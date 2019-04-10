@@ -8,7 +8,7 @@ from torch.autograd import Variable
 from tqdm import tqdm
 
 from dataaccess.files_constants import GENERATED_NN_PREPROCESSED_DATA, GENERATED_NEURAL_NETWORK_MODEL, \
-    GENERATED_NEURAL_NETWORK_LOSS_HISTORY, GENERATED_NN_PREPROCESSED_DEV_DATA
+    GENERATED_NEURAL_NETWORK_LOSS_HISTORY
 from dataaccess.files_io import write_pickle
 from model.NN_feed_forward_model import ShallowFeedForwardNeuralNetworkModel, DeepFeedForwardNeuralNetworkModel
 from model.fever_claims_dataset import FeverClaimsDataset
@@ -43,8 +43,7 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=args.batch_size,
                                            shuffle=True)
 
-test_dataset = FeverClaimsDataset(GENERATED_NN_PREPROCESSED_DEV_DATA)
-dev_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+dev_loader = torch.utils.data.DataLoader(dataset=dev_dataset,
                                          batch_size=args.batch_size,
                                          shuffle=False)
 
@@ -78,9 +77,6 @@ for epoch in range(args.num_epochs):
 
         input_var = Variable(inputs).to(args.device) #todo
         labels_var = Variable(labels).to(args.device)
-
-        print(input_var.shape())
-        print(labels_var.shape())
 
         # clear gradients
         optimiser.zero_grad()
@@ -116,8 +112,8 @@ with torch.no_grad():
     correct = 0
     total = 0
     for inputs, labels in dev_loader:
-        inputs = inputs.to(args.device)
-        labels = labels.to(args.device)
+        inputs = Variable(inputs).to(args.device)
+        labels = Variable(labels).to(args.device)
         outputs = model(inputs)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
@@ -125,9 +121,9 @@ with torch.no_grad():
 
     print('Accuracy on dev subset: {:.5f} %'.format(correct / total))
 
-# plot loss history
-plot_loss_values(args.num_iterations, args.learning_rate, loss_history, loss_history_frequency)
-
 # save results
 write_pickle(GENERATED_NEURAL_NETWORK_MODEL.format(args.preprocessed_format), model)
 write_pickle(GENERATED_NEURAL_NETWORK_LOSS_HISTORY.format(args.preprocessed_format), loss_history)
+
+# plot loss history
+plot_loss_values(num_iterations, args.learning_rate, loss_history, loss_history_frequency)

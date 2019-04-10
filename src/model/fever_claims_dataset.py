@@ -3,7 +3,7 @@ import torch
 from torch.utils.data.dataset import Dataset
 
 from dataaccess.files_io import read_pickle
-from util.logreg_preprocessing import extract_input_and_expected
+from util.LR_NN_preprocessing import extract_input_and_expected
 
 
 class FeverClaimsDataset(Dataset):

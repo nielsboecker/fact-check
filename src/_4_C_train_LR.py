@@ -6,7 +6,7 @@ from _4_B_fit_LR_model import fit_and_get_model, LOSS_HISTORY_FREQUENCY
 from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, \
     GENERATED_LOGISTIC_REGRESSION_LOSS_HISTORY, GENERATED_NN_PREPROCESSED_TRAINING_DATA
 from dataaccess.files_io import read_pickle, write_pickle
-from util.logreg_preprocessing import extract_input_and_expected
+from util.LR_NN_preprocessing import extract_input_and_expected
 from util.plots import plot_loss_values
 
 parser = argparse.ArgumentParser()

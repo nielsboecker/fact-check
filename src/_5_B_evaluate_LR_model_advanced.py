@@ -9,9 +9,9 @@ from sklearn.metrics import roc_auc_score, precision_recall_curve, auc, average_
 from dataaccess.files_constants import GENERATED_LOGISTIC_REGRESSION_MODEL, GENERATED_LR_PREPROCESSED_DEV_DATA
 from dataaccess.files_io import read_pickle
 from model.logistic_regression import LogisticRegressionModel
+from util.LR_NN_preprocessing import extract_input_and_expected
 from util.evaluation import get_baserate_predictions, \
     get_baserate_probabilities
-from util.logreg_preprocessing import extract_input_and_expected
 from util.plots import prepare_seaborn_plots, show_plot_and_save_figure
 
 parser = argparse.ArgumentParser()
