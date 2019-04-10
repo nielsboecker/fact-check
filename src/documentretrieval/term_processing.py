@@ -15,6 +15,15 @@ def preprocess_doc_text(text: str) -> str:
     return re.sub(r'(-LRB-|-RRB-|-LSB-|-RSB-|-COLON-) ', '', text)
 
 
+def recreate_punctuation_in_doc_text(text: str) -> str:
+    return text \
+        .replace('-LRB- ', '(') \
+        .replace(' -RRB-', ')') \
+        .replace('-LSB- ', ']') \
+        .replace(' -RSB-', ']') \
+        .replace(' -COLON-', ';')
+
+
 def tokenise_doc_text(text: str) -> list:
     return re.split(r'\s+|-', text)
 

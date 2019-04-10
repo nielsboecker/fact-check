@@ -48,6 +48,10 @@ def write_list_to_jsonl(output_path: str, data: list):
     print(colored('Wrote {} lines to "{}"'.format(len(data), output_path), attrs=['bold']))
 
 
+def write_dataframe_to_csv(output_path: str, data: pd.DataFrame, sep: str = ',', header: bool = True):
+    data.to_csv(output_path, sep=sep, header=header, index=False)
+
+
 def write_list_to_oneline_csv(dir_path: str, claim_id: int, list_of_tuples: list):
     create_dir_if_not_exists(dir_path)
     with open('{}{}.csv'.format(dir_path, claim_id), 'w', newline='') as fp:
