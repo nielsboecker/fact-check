@@ -23,20 +23,21 @@ parser.add_argument('--dataset', type=str, choices=['train', 'dev', 'test'], req
 args = parser.parse_args()
 
 
-def transform_NN_input(claim_text: str, line_text: str, line_contains_references: int, line_position_absolute: int,
-                       line_position_relative: float, num_evidence_docs_for_claim: int, num_lines_for_evidence: int,
-                       num_coordination_terms_claim: int, num_coordination_terms_title: int):
+def transform_NN_input(claim_text: str, combined_evidence: str, num_evidence_docs_for_claim: int, 
+                       num_references: int, num_evidence_items: int, num_coordination_terms_evidence_claim: int,
+                       num_coordination_terms_titles_claim: int, avg_sentence_position: float, num_evidence_words: int):
     # remove punctuation that are otherwise part of tokens
     preprocessed_claim = preprocess_claim_text(claim_text)
     # remove artifacts like -LRB- etc.
-    preprocessed_line = preprocess_doc_text(line_text)
+    preprocessed_line = preprocess_doc_text(combined_evidence)
 
     claim_vector = transform_sentence_to_vector(preprocessed_claim, args.debug)
     line_vector = transform_sentence_to_vector(preprocessed_line, args.debug)
     combined_claim_line_vector = get_vector_difference(claim_vector, line_vector)
-    additional_features = np.array((line_contains_references, line_position_absolute, line_position_relative,
-                                    num_evidence_docs_for_claim, num_lines_for_evidence, num_coordination_terms_claim,
-                                    num_coordination_terms_title))
+    
+    additional_features = np.array((num_evidence_docs_for_claim, num_references, num_evidence_items,
+                                    num_coordination_terms_evidence_claim, num_coordination_terms_titles_claim,
+                                    avg_sentence_position, num_evidence_words))
 
     return np.concatenate((combined_claim_line_vector, additional_features))
 
@@ -61,6 +62,7 @@ def preprocess_claim(claim_row: pd.Series) -> list:
     num_evidence_docs_for_claim = len(evidence_map.keys())
     num_references = 0
     num_evidence_items = 0
+    num_evidence_words = 0
     num_coordination_terms_evidence_claim = 0
     num_coordination_terms_titles_claim = 0
     evidence_sentence_positions = []
@@ -74,6 +76,7 @@ def preprocess_claim(claim_row: pd.Series) -> list:
         for line_id in relevant_line_ids:
             line = wiki_page.lines[line_id]
             line_text = line.text
+            num_evidence_words += len(line_text.split())
             num_references += len(line.anchors)
             num_evidence_items += 1
             evidence_sentence_positions.append(line.id)
@@ -84,7 +87,9 @@ def preprocess_claim(claim_row: pd.Series) -> list:
     combined_evidence = ' '.join(evidence_sentences)
     avg_sentence_position = np.mean(evidence_sentence_positions)
 
-    input = transform_NN_input(claim, combined_evidence)
+    input = transform_NN_input(claim, combined_evidence, num_evidence_docs_for_claim, num_references,
+                               num_evidence_items, num_coordination_terms_evidence_claim,
+                               num_coordination_terms_titles_claim, avg_sentence_position, num_evidence_words)
     preprocessed_pairs.append((claim_id, input, output))
 
     return preprocessed_pairs

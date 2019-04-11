@@ -1,5 +1,4 @@
 import math
-from decimal import Decimal
 
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -27,7 +26,7 @@ if __name__ == '__main__':
     plt.xlabel('log(rank)')
     plt.ylabel('log(frequency)')
     plt.figtext(0.2, 0.45, 'R$^2$ = {:.5f}'.format(r_squared))
-    plt.figtext(0.2, 0.4, 'p < 4E-324')
-    plt.figtext(0.2, 0.35, 'standard error = {:.3E}'.format(Decimal(std_err)))
+    #plt.figtext(0.2, 0.4, 'p < 4E-324')
+    # plt.figtext(0.2, 0.35, 'standard error = {:.3E}'.format(Decimal(std_err)))
 
     show_plot_and_save_figure('1_distribution_zipf.png')
