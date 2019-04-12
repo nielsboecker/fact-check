@@ -19,6 +19,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--debug', help='don\'t load GloVe embeddings, use fake vectors', action='store_true')
 parser.add_argument('--dataset', type=str, choices=['train', 'train_all', 'dev'], default='train')
 parser.add_argument('--file', type=str, help='use this file (overrides dataset)')
+parser.add_argument('--cores', type=int, default=None, help='Limit number of cores (optional)')
 args = parser.parse_args()
 
 
@@ -73,7 +74,7 @@ if __name__ == '__main__':
         in_path = './submission/retrieved_dev/Q3_laplace_lindstone_0.01_10000_claims.csv.csv'
 
     claims_and_retrieved_docs = pd.read_csv(in_path, delimiter=',', quotechar='|', header=0, index_col=0)
-    pool = get_process_pool()
+    pool = get_process_pool(cores=args.cores)
 
     # 10,000 claims + sentences too much to keep in memory at once
     if args.dataset.endswith('all') or (args.file and args.file.endswith('all')):
