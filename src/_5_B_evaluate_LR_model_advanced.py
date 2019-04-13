@@ -20,8 +20,6 @@ args = parser.parse_args()
 
 
 def plot_precision_recall_curve():
-    prepare_seaborn_plots()
-
     # precision-recall curve for the model and baserate
     plt.plot(model_recall, model_precision, marker='.', label='Trained logistic regression')
     plt.plot(baserate_recall, baserate_precision, marker='.', label='Base rate model')
@@ -91,6 +89,6 @@ if __name__ == '__main__':
     avg_precision_score = average_precision_score(dev_expected, model_probabilities)
     print('Average Precision Score: {}'.format(avg_precision_score))
 
+    prepare_seaborn_plots()
     plot_roc_auc_curve()
-
     plot_precision_recall_curve()
