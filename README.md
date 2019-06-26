@@ -22,7 +22,7 @@ The dataset used is the publicly available Fact Extraction and Verification
 ## How to reproduce
 The scripts for all sub-tasks are in the `src/` directory. They are clearly named according to the scheme `_N_i_description.py`, where N is the sub-task, i defines the order within it, and the description summarises what the script does. To find out about configuration, invoke the script with `--help` flag.
 
-As the scripts are often using the output of earlier scripts, i.e. first generating the inverted index and then using it for retrieval speed-up, they should all be run in sequence to reproduce the results. In addition, `scripts/_1_download_data.sh` should be run initially to download the corpus, word embeddings etc. Also, `scripts/_2_retrieve_docs_for_first_claims.sh` can be used for convenience to run all implemented retrieval variations for a small sample from the training set at once.
+As the scripts are often using the output of earlier scripts, e.g. first generating the inverted index and then using it for retrieval speed-up, they should all be run in sequence to reproduce the results. In addition, `scripts/_1_download_data.sh` should be run initially to download the corpus, word embeddings etc. Also, `scripts/_2_retrieve_docs_for_first_claims.sh` can be used for convenience to run all implemented retrieval variations for a small sample from the training set at once.
 
 The solution was developed using Python3 and the libraries listed in `requirements.txt`. To reproduce, you could use conda:
 ```
